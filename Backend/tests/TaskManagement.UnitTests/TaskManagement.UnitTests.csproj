@@ -20,4 +20,9 @@
     <Using Include="Xunit" />
   </ItemGroup>
 
+  <ItemGroup>
+    <ProjectReference Include="..\..\src\TaskManagement.Application\TaskManagement.Application.csproj" />
+    <ProjectReference Include="..\..\src\TaskManagement.Domain\TaskManagement.Domain.csproj" />
+  </ItemGroup>
+
 </Project>
