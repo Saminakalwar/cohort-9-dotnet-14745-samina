@@ -1,6 +1,8 @@
 using TaskManagement.Domain.Common;
 using TaskManagement.Domain.Enums;
 
+namespace TaskManagement.Domain.Entities;
+
 public class TaskItem : AuditableEntity
 {
     public string Title { get; set; } = string.Empty; // bcs it is required so must give default value
