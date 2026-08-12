@@ -11,6 +11,16 @@ public static class DependencyInjection
     this IServiceCollection services,
     IConfiguration configuration)
 {
+    if (services is null)
+    {
+        throw new ArgumentNullException(nameof(services));
+    }
+
+    if (configuration is null)
+    {
+        throw new ArgumentNullException(nameof(configuration));
+    }
+
     var connectionString =
         configuration.GetConnectionString("DefaultConnection");
 
