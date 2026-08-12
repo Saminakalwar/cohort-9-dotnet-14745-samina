@@ -20,8 +20,8 @@ if (app.Environment.IsDevelopment())
     app.UseSwaggerUI();
 }
 
-app.MapControllers();
 app.UseHttpsRedirection();
+app.MapControllers();
 
 //here we define wht is going to happen when these http requests starts arriving into our application
 app.MapGet("/", () => Results.Ok("Task Management API is running."));

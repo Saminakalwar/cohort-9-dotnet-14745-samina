@@ -4,7 +4,18 @@ namespace TaskManagement.Domain.Entities;
 
 public class ApplicationUser : IdentityUser
 {
-    public string FirstName { get; set; } = string.Empty;
+    private string _firstName = string.Empty;
+    private string _lastName = string.Empty;
 
-    public string LastName { get; set; } = string.Empty;
+    public string FirstName
+    {
+        get => _firstName;
+        set => _firstName = value ?? throw new ArgumentNullException(nameof(value));
+    }
+
+    public string LastName
+    {
+        get => _lastName;
+        set => _lastName = value ?? throw new ArgumentNullException(nameof(value));
+    }
 }
