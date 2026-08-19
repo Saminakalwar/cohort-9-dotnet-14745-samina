@@ -11,7 +11,7 @@ public class TaskItem : AuditableEntity
     public TaskPriority Priority { get; set; }
     public TaskManagement.Domain.Enums.TaskStatus Status { get; set; } // to get rid of compiler confusion with System.Threading.Tasks.TaskStatus add whole path
     public Guid CategoryId { get; set; }
-    public Category Category { get; set; } = null!;  //must add !
+    public Category Category { get; set; } = null!;
     public string AssignedUserId { get; set; } = string.Empty;
 
 
