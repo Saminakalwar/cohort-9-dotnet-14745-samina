@@ -8,11 +8,12 @@ namespace TaskManagement.Infrastructure.Services;
 public class AuthService : IAuthService
 {
     private readonly UserManager<ApplicationUser> _userManager;
-    // private readonly Signin
+    private readonly IJwtService _jwtService;
 
-    public AuthService(UserManager<ApplicationUser> userManager)
+    public AuthService(UserManager<ApplicationUser> userManager, IJwtService jwtService)
     {
         _userManager = userManager;
+        _jwtService = jwtService;
     }
 
     public async Task<bool> RegisterAsync(RegisterRequest request)
@@ -38,7 +39,7 @@ public class AuthService : IAuthService
     }
 
 
-    public async Task<LoginResponse> LoginAsync(LoginRequest request)
+    public async Task<LoginResponse?> LoginAsync(LoginRequest request)
     {
         var userExist = await _userManager.FindByEmailAsync(request.Email);
         if(userExist is null)
@@ -46,15 +47,19 @@ public class AuthService : IAuthService
             return null;
         }
 
-        var validPass = await _userManager.CheckPasswordAsync(userExist, request.Password);
-        if (!validPass)
+        var validPassword = await _userManager.CheckPasswordAsync(userExist, request.Password);
+        if (!validPassword)
         {
             return null;
         }
 
+        var roles = await _userManager.GetRolesAsync(userExist);
+        var token = _jwtService.GenerateToken(userExist.Id, userExist.Email ?? string.Empty, roles);
+
         return new LoginResponse
         {
-            Email = userExist.Email ?? string.Empty
+            Email = userExist.Email ?? string.Empty,
+            Token = token
         };
         
     }
