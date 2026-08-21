@@ -2,7 +2,8 @@ using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Configuration;
 using TaskManagement.Persistence.Context;
 using Microsoft.EntityFrameworkCore;
-
+using TaskManagement.Domain.Entities;
+using Microsoft.AspNetCore.Identity;
 
 namespace TaskManagement.Persistence;
 public static class DependencyInjection
@@ -39,6 +40,8 @@ public static class DependencyInjection
                 sqlOptions.EnableRetryOnFailure();
             });
     });
+
+    services.AddIdentityCore<ApplicationUser>().AddRoles<IdentityRole>().AddEntityFrameworkStores<ApplicationDbContext>();
 
     return services;
 }
