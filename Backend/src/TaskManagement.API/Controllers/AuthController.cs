@@ -1,3 +1,4 @@
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.HttpLogging;
 using Microsoft.AspNetCore.Mvc;
 using TaskManagement.Application.DTOs.Auth;
@@ -40,6 +41,13 @@ public class AuthController : ControllerBase
             return Unauthorized("Invalid email or Password");
         }
         return Ok(result);
+    }
+
+    [Authorize]
+    [HttpGet("protected")]
+    public IActionResult Protected()
+    {
+        return Ok("You are authenticated!");
     }
 
 }

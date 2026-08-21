@@ -1,4 +1,5 @@
 using Microsoft.Extensions.DependencyInjection;
+using TaskManagement.Application.Common;
 using TaskManagement.Application.Interfaces;
 using TaskManagement.Infrastructure.Services;
 
@@ -16,7 +17,7 @@ public static class DependencyInjection
 
         services.AddScoped<IAuthService, AuthService>();
         services.AddScoped<IJwtService, JwtService>();
-        
+       
         return services;
     }
 }
