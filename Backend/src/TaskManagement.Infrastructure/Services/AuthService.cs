@@ -2,6 +2,7 @@ using Microsoft.AspNetCore.Identity;
 using TaskManagement.Application.DTOs.Auth;
 using TaskManagement.Application.Interfaces;
 using TaskManagement.Domain.Entities;
+using TaskManagement.Domain.Common;
 
 namespace TaskManagement.Infrastructure.Services;
 
@@ -32,9 +33,19 @@ public class AuthService : IAuthService
             UserName = request.Email
             };
 
-            var result = await _userManager.CreateAsync(user,request.Password);
+        var result = await _userManager.CreateAsync(user, request.Password);
 
-            return result.Succeeded;
+        if (!result.Succeeded)
+        {
+            return false;
+        }
+
+        var roleResult =
+            await _userManager.AddToRoleAsync(
+                user,
+                AppRoles.User);
+
+        return roleResult.Succeeded;
         
     }
 

@@ -5,6 +5,7 @@ using TaskManagement.Application.Common;
 using TaskManagement.Infrastructure;
 using TaskManagement.Persistence;
 using Microsoft.OpenApi.Models;
+using TaskManagement.Persistence.Identity;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -107,5 +108,7 @@ app.MapControllers();
 app.MapGet(
     "/",
     () => Results.Ok("Task Management API is running."));
+
+await RoleSeeder.SeedRolesAsync(app.Services);
 
 app.Run();

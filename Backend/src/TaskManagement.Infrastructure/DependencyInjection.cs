@@ -17,7 +17,9 @@ public static class DependencyInjection
 
         services.AddScoped<IAuthService, AuthService>();
         services.AddScoped<IJwtService, JwtService>();
-       
+        services.AddHttpContextAccessor();  //provide access to HttpContext which belongs to asp net Core 
+        services.AddScoped<ICurrentUserService, CurrentUserService>(); // registration for current User in our application
+
         return services;
     }
 }
