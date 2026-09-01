@@ -1,0 +1,31 @@
+using TaskManagement.Application.DTOs.Categories;
+using TaskManagement.Application.Interfaces;
+using TaskManagement.Persistence.Context;
+using TaskManagement.Domain.Entities;
+
+namespace TaskManagement.Infrastructure.Services;
+
+public class CategoryService : ICategoryService
+{
+    private readonly ApplicationDbContext _context;
+
+    public CategoryService(ApplicationDbContext context)
+    {
+        _context = context;
+    }
+
+    public async Task<Guid> CreateCategoryAsync(CreateCategoryRequest request)
+    {
+        var category = new Category
+        {
+            Id = Guid.NewGuid(),
+            Name = request.Name,
+            CreatedAt = DateTime.UtcNow
+        };
+
+        _context.Categories.Add(category);
+        await _context.SaveChangesAsync();
+
+        return category.Id;
+    }
+}
