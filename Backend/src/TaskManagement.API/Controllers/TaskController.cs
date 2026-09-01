@@ -39,4 +39,57 @@ public class TaskController : ControllerBase
             });
         }
     }
+
+
+    [Authorize]
+    [HttpGet]
+    public async Task<IActionResult> GetTasks()
+    {
+        var tasks = await _taskService.GetTaskAsync();
+        return Ok(tasks);
+    }
+
+    [Authorize]
+[HttpGet("{id:guid}")]
+public async Task<IActionResult> GetTaskById(Guid id)
+{
+    var task = await _taskService.GetTaskByIdAsync(id);
+
+    if (task == null)
+    {
+        return NotFound(new
+        {
+            message = "Task not found."
+        });
+    }
+
+    return Ok(task);
+}
+
+[Authorize]
+[HttpPut("{id:guid}")]
+public async Task<IActionResult> UpdateTask(
+    Guid id,
+    [FromBody] UpdateTaskRequest request)
+{
+    await _taskService.UpdateTaskAsync(id, request);
+
+    return Ok(new
+    {
+        message = "Task updated successfully."
+    });
+}
+
+[Authorize]
+[HttpDelete("{id:guid}")]
+public async Task<IActionResult> DeleteTask(Guid id)
+{
+    await _taskService.DeleteTaskAsync(id);
+
+    return Ok(new
+    {
+        message = "Task deleted successfully."
+    });
+}
+
 }
