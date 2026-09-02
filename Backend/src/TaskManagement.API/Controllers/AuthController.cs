@@ -95,7 +95,17 @@ public class AuthController : ControllerBase
             return Ok("Admin role assigned successfully.");
         }
 
-
+        [Authorize]
+        [HttpGet("profile")]
+        public async Task<IActionResult> GetProfile()
+        {
+            var profile = await _authService.GetProfileAsync();
+            if (profile == null)
+            {
+                return NotFound("User Profile not found.");
+            }
+            return Ok(profile);
+        }
 }
 
 

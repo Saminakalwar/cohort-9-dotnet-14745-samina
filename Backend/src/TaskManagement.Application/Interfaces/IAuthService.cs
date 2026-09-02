@@ -4,4 +4,6 @@ public interface IAuthService
 {
     Task <bool> RegisterAsync(RegisterRequest request);
     Task <LoginResponse?> LoginAsync(LoginRequest request);
+
+    Task<ProfileResponse?> GetProfileAsync();
 }

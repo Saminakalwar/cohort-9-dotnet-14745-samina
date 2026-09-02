@@ -21,6 +21,7 @@ public static class DependencyInjection
         services.AddScoped<ICurrentUserService, CurrentUserService>(); // registration for current User in our application
         services.AddScoped<ITaskService, TaskService>();
         services.AddScoped<ICategoryService, CategoryService>();
+        services.AddScoped<IDashboardService, DashboardService>();
         return services;
     }
 }

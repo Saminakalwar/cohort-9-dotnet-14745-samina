@@ -30,4 +30,11 @@ public class CategoriesController : ControllerBase
             CategoryId = categoryId
         });
     }
+
+    [HttpGet]
+    public async Task<IActionResult> GetAllCategories()
+    {
+        var categories = await _categoryService.GetAllCategoriesAsync();
+        return Ok(categories);
+    }
 }

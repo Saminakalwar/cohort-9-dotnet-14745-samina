@@ -10,11 +10,13 @@ public class AuthService : IAuthService
 {
     private readonly UserManager<ApplicationUser> _userManager;
     private readonly IJwtService _jwtService;
+    private readonly ICurrentUserService _currentUserService;
 
-    public AuthService(UserManager<ApplicationUser> userManager, IJwtService jwtService)
+    public AuthService(UserManager<ApplicationUser> userManager, IJwtService jwtService, ICurrentUserService currentUserService)
     {
         _userManager = userManager;
         _jwtService = jwtService;
+        _currentUserService = currentUserService;
     }
 
     public async Task<bool> RegisterAsync(RegisterRequest request)
@@ -73,5 +75,26 @@ public class AuthService : IAuthService
             Token = token
         };
         
+    }
+
+    public async Task<ProfileResponse?> GetProfileAsync()
+    {
+        if (string.IsNullOrWhiteSpace(_currentUserService.UserId))
+        {
+            return null;
+        }
+
+        var user = await _userManager.FindByIdAsync(_currentUserService.UserId);
+        if (user == null)
+        {
+            return null;
+        }
+
+        return new ProfileResponse
+        {
+            FirstName = user.FirstName,
+            LastName = user.LastName,
+            Email = user.Email ?? string.Empty
+        };
     }
 }
