@@ -4,6 +4,7 @@ namespace TaskManagement.Infrastructure.Services;
 using Microsoft.EntityFrameworkCore;
 using TaskManagement.Application.DTOs.Dashboard;
 using TaskManagement.Domain.Enums;
+using TaskManagement.Domain.Common;
 public class DashboardService : IDashboardService
 {
 private readonly ApplicationDbContext _context;
@@ -17,7 +18,7 @@ public DashboardService(ApplicationDbContext context, ICurrentUserService curren
 public async Task<DashboardResponse> GetDashboardAsync()
     {
        var query = _context.Tasks.AsQueryable();
-      if(!_currentUserService.IsInRole("Admin"))
+      if(!_currentUserService.IsInRole(AppRoles.Admin))
       {
         query = query.Where(task => task.AssignedUserId == _currentUserService.UserId);
       }

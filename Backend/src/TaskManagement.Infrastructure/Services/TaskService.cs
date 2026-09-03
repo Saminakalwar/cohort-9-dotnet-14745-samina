@@ -5,7 +5,9 @@ using TaskManagement.Persistence.Context;
 using TaskManagement.Domain.Enums;
 using TaskManagement.Domain.Entities;
 using TaskManagement.Domain.Common;
-using Microsoft.AspNetCore.Http.HttpResults;
+using Microsoft.Extensions.Logging;
+using Microsoft.EntityFrameworkCore.Metadata.Internal;
+
 
 namespace TaskManagement.Infrastructure.Services;
 
@@ -13,23 +15,25 @@ public class TaskService : ITaskService
 {
     private readonly ApplicationDbContext _context;
     private readonly ICurrentUserService _currentUserService;
+    private readonly ILogger<TaskService> _logger;
 
-    public TaskService(ApplicationDbContext context, ICurrentUserService currentUserService)
+    public TaskService(ApplicationDbContext context, ICurrentUserService currentUserService, ILogger<TaskService> logger)
     {
         _context = context;
         _currentUserService = currentUserService;
+        _logger = logger;
     }
 
     public async Task<Guid> CreateTaskAsync(CreateTaskRequest request)
     {
         var categoryExist = await _context.Categories.AnyAsync(category => category.Id == request.CategoryId);
-        
+
         if (!categoryExist)
         {
-            throw new Exception("Category not found");
+            throw new KeyNotFoundException("Category not found.");
         }
 
-        if(string.IsNullOrWhiteSpace(_currentUserService.UserId))
+        if (string.IsNullOrWhiteSpace(_currentUserService.UserId))
         {
             throw new UnauthorizedAccessException("User is not authenticated");
         }
@@ -51,48 +55,22 @@ public class TaskService : ITaskService
         _context.Tasks.Add(task);
         await _context.SaveChangesAsync();
 
+        _logger.LogInformation("Task {TaskId} created by user {UserId}", task.Id,_currentUserService.UserId);
+
         return task.Id;
     }
 
-   public async  Task<IEnumerable<TaskResponse>> GetTaskAsync()
+    public async Task<IEnumerable<TaskResponse>> GetTaskAsync()
     {
         var query = _context.Tasks.Include(t => t.Category).AsQueryable(); //unexecutable query
 
         if (!_currentUserService.IsInRole(AppRoles.Admin))
         {
-            query = query.Where(t => 
+            query = query.Where(t =>
             t.AssignedUserId == _currentUserService.UserId);
-        }  
+        }
 
-           return await query.Select(t => new TaskResponse
-        {
-            Id = t.Id    ,
-            Title = t.Title,
-            Description = t.Description,
-            DueDate = t.DueDate,
-            Priority = (int)t.Priority,
-            Status = (int)t.Status,
-            CategoryId = t.CategoryId,
-            CategoryName = t.Category.Name,
-            AssignedUserId = t.AssignedUserId
-
-        }).ToListAsync();
-    } 
-
-    public async Task<TaskResponse?> GetTaskByIdAsync(Guid id)
-{
-    var query = _context.Tasks
-        .Include(t => t.Category)
-        .AsQueryable();
-
-    if (!_currentUserService.IsInRole(AppRoles.Admin))
-    {
-        query = query.Where(t => t.AssignedUserId == _currentUserService.UserId);
-    }
-
-    return await query
-        .Where(t => t.Id == id)
-        .Select(t => new TaskResponse
+        return await query.Select(t => new TaskResponse
         {
             Id = t.Id,
             Title = t.Title,
@@ -103,67 +81,98 @@ public class TaskService : ITaskService
             CategoryId = t.CategoryId,
             CategoryName = t.Category.Name,
             AssignedUserId = t.AssignedUserId
-        })
-        .FirstOrDefaultAsync();
-}
 
-public async Task UpdateTaskAsync(Guid id, UpdateTaskRequest request)
-{
-    var task = await _context.Tasks
-        .FirstOrDefaultAsync(t => t.Id == id);
-
-    if (task == null)
-    {
-        throw new KeyNotFoundException("Task not found.");
+        }).ToListAsync();
     }
 
-    if (!_currentUserService.IsInRole(AppRoles.Admin) &&
-        task.AssignedUserId != _currentUserService.UserId)
+    public async Task<TaskResponse?> GetTaskByIdAsync(Guid id)
     {
-        throw new UnauthorizedAccessException(
-            "You are not authorized to update this task.");
+        var query = _context.Tasks
+            .Include(t => t.Category)
+            .AsQueryable();
+
+        if (!_currentUserService.IsInRole(AppRoles.Admin))
+        {
+            query = query.Where(t => t.AssignedUserId == _currentUserService.UserId);
+        }
+
+        return await query
+            .Where(t => t.Id == id)
+            .Select(t => new TaskResponse
+            {
+                Id = t.Id,
+                Title = t.Title,
+                Description = t.Description,
+                DueDate = t.DueDate,
+                Priority = (int)t.Priority,
+                Status = (int)t.Status,
+                CategoryId = t.CategoryId,
+                CategoryName = t.Category.Name,
+                AssignedUserId = t.AssignedUserId
+            })
+            .FirstOrDefaultAsync();
+
     }
 
-    var categoryExists = await _context.Categories
-        .AnyAsync(c => c.Id == request.CategoryId);
-
-    if (!categoryExists)
+    public async Task UpdateTaskAsync(Guid id, UpdateTaskRequest request)
     {
-        throw new KeyNotFoundException("Category not found.");
+        var task = await _context.Tasks
+            .FirstOrDefaultAsync(t => t.Id == id);
+
+        if (task == null)
+        {
+            throw new KeyNotFoundException("Task not found.");
+        }
+
+        if (!_currentUserService.IsInRole(AppRoles.Admin) &&
+            task.AssignedUserId != _currentUserService.UserId)
+        {
+            throw new UnauthorizedAccessException(
+                "You are not authorized to update this task.");
+        }
+
+        var categoryExists = await _context.Categories
+            .AnyAsync(c => c.Id == request.CategoryId);
+
+        if (!categoryExists)
+        {
+            throw new KeyNotFoundException("Category not found.");
+        }
+
+        task.Title = request.Title;
+        task.Description = request.Description;
+        task.DueDate = request.DueDate;
+        task.Priority = (TaskPriority)request.Priority;
+        task.Status = (TaskManagement.Domain.Enums.TaskStatus)request.Status;
+        task.CategoryId = request.CategoryId;
+        task.UpdatedAt = DateTime.UtcNow;
+        task.UpdatedBy = _currentUserService.UserId;
+
+        await _context.SaveChangesAsync();
+        _logger.LogInformation("Task {TaskId} updated by user {UserId}", task.Id, _currentUserService.UserId);
     }
 
-    task.Title = request.Title;
-    task.Description = request.Description;
-    task.DueDate = request.DueDate;
-    task.Priority = (TaskPriority)request.Priority;
-    task.Status = (TaskManagement.Domain.Enums.TaskStatus)request.Status;
-    task.CategoryId = request.CategoryId;
-    task.UpdatedAt = DateTime.UtcNow;
-    task.UpdatedBy = _currentUserService.UserId;
-
-    await _context.SaveChangesAsync();
-}
-
-public async Task DeleteTaskAsync(Guid id)
-{
-    var task = await _context.Tasks
-        .FirstOrDefaultAsync(t => t.Id == id);
-
-    if (task == null)
+    public async Task DeleteTaskAsync(Guid id)
     {
-        throw new KeyNotFoundException("Task not found.");
+        var task = await _context.Tasks
+            .FirstOrDefaultAsync(t => t.Id == id);
+
+        if (task == null)
+        {
+            throw new KeyNotFoundException("Task not found.");
+        }
+
+        if (!_currentUserService.IsInRole(AppRoles.Admin) &&
+            task.AssignedUserId != _currentUserService.UserId)
+        {
+            throw new UnauthorizedAccessException(
+                "You are not authorized to delete this task.");
+        }
+
+        _context.Tasks.Remove(task);
+
+        await _context.SaveChangesAsync();
+        _logger.LogInformation("Task {TaskId} deleted by user {UserId}", task.Id, _currentUserService.UserId);
     }
-
-    if (!_currentUserService.IsInRole(AppRoles.Admin) &&
-        task.AssignedUserId != _currentUserService.UserId)
-    {
-        throw new UnauthorizedAccessException(
-            "You are not authorized to delete this task.");
-    }
-
-    _context.Tasks.Remove(task);
-
-    await _context.SaveChangesAsync();
-}
 
 }
