@@ -6,8 +6,32 @@ using TaskManagement.Infrastructure;
 using TaskManagement.Persistence;
 using Microsoft.OpenApi.Models;
 using TaskManagement.Persistence.Identity;
+using TaskManagement.API.Middleware;
+using Serilog;
+using Serilog.Events;
 
+Log.Logger = new LoggerConfiguration()
+    .MinimumLevel.Information()
+
+    // Hide EF Core SQL queries
+    .MinimumLevel.Override(
+        "Microsoft.EntityFrameworkCore",
+        LogEventLevel.Warning)
+
+    // Hide ASP.NET Core request execution noise
+    .MinimumLevel.Override(
+        "Microsoft.AspNetCore",
+        LogEventLevel.Warning)
+
+    .WriteTo.Console()
+    .WriteTo.File(
+        "logs/app-.log",
+        rollingInterval: RollingInterval.Day)
+    .CreateLogger();
+    
 var builder = WebApplication.CreateBuilder(args);
+
+builder.Host.UseSerilog();
 
 // Add services 
 builder.Services.AddControllers();
@@ -100,6 +124,7 @@ if (app.Environment.IsDevelopment())
     app.UseSwaggerUI();
 }
 
+app.UseMiddleware<ExceptionHandlingMiddleware>();
 app.UseHttpsRedirection();
 app.UseAuthentication();
 app.UseAuthorization();

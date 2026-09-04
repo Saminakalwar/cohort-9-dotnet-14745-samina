@@ -3,6 +3,7 @@ using TaskManagement.Application.DTOs.Auth;
 using TaskManagement.Application.Interfaces;
 using TaskManagement.Domain.Entities;
 using TaskManagement.Domain.Common;
+using Microsoft.Extensions.Logging;
 
 namespace TaskManagement.Infrastructure.Services;
 
@@ -11,12 +12,14 @@ public class AuthService : IAuthService
     private readonly UserManager<ApplicationUser> _userManager;
     private readonly IJwtService _jwtService;
     private readonly ICurrentUserService _currentUserService;
+    private readonly ILogger<AuthService> _logger;
 
-    public AuthService(UserManager<ApplicationUser> userManager, IJwtService jwtService, ICurrentUserService currentUserService)
+    public AuthService(UserManager<ApplicationUser> userManager, IJwtService jwtService, ICurrentUserService currentUserService, ILogger<AuthService> logger)
     {
         _userManager = userManager;
         _jwtService = jwtService;
         _currentUserService = currentUserService;
+        _logger = logger;
     }
 
     public async Task<bool> RegisterAsync(RegisterRequest request)
@@ -47,6 +50,7 @@ public class AuthService : IAuthService
                 user,
                 AppRoles.User);
 
+        _logger.LogInformation("User {Email} registered successfully", user.Email);
         return roleResult.Succeeded;
         
     }
@@ -69,6 +73,7 @@ public class AuthService : IAuthService
         var roles = await _userManager.GetRolesAsync(userExist);
         var token = _jwtService.GenerateToken(userExist.Id, userExist.Email ?? string.Empty, roles);
 
+        _logger.LogInformation("User {Email} logged in successfully", userExist.Email);
         return new LoginResponse
         {
             Email = userExist.Email ?? string.Empty,

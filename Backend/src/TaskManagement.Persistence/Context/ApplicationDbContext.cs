@@ -6,7 +6,8 @@ namespace TaskManagement.Persistence.Context;
 
 public class ApplicationDbContext : IdentityDbContext<ApplicationUser>
 {
-    public ApplicationDbContext(DbContextOptions<ApplicationDbContext> options)
+    public ApplicationDbContext(
+        DbContextOptions<ApplicationDbContext> options)
         : base(options)
     {
     }
@@ -15,7 +16,7 @@ public class ApplicationDbContext : IdentityDbContext<ApplicationUser>
 
     public DbSet<Category> Categories => Set<Category>();
 
-   protected override void OnModelCreating(ModelBuilder builder)
+    protected override void OnModelCreating(ModelBuilder builder)
     {
         // Configure Identity tables first
         base.OnModelCreating(builder);
@@ -29,6 +30,17 @@ public class ApplicationDbContext : IdentityDbContext<ApplicationUser>
                 .WithMany()
                 .HasForeignKey(task => task.AssignedUserId)
                 .OnDelete(DeleteBehavior.Restrict);
+
+            entity.ToTable(table =>
+            {
+                table.HasCheckConstraint(
+                    "CK_Tasks_Status",
+                    "[Status] IN (1, 2, 3)");
+
+                table.HasCheckConstraint(
+                    "CK_Tasks_Priority",
+                    "[Priority] IN (1, 2, 3, 4)");
+            });
         });
     }
 }
