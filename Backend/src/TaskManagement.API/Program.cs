@@ -4,23 +4,21 @@ using Microsoft.IdentityModel.Tokens;
 using TaskManagement.Application.Common;
 using TaskManagement.Infrastructure;
 using TaskManagement.Persistence;
+using Microsoft.OpenApi.Models;
+using TaskManagement.Persistence.Identity;
 
 var builder = WebApplication.CreateBuilder(args);
 
-// Add services to the container.
+// Add services 
 builder.Services.AddControllers();
-
 builder.Services.AddPersistenceServices(
     builder.Configuration);
-
 builder.Services.AddInfrastructureServices();
 
-
-// Configure JWT settings
+// Configure JWT settings   
 builder.Services.Configure<JwtSettings>(
     builder.Configuration.GetSection("JwtSettings")
 );
-
 
 // Configure JWT Authentication
 builder.Services
@@ -59,10 +57,39 @@ builder.Services
             };
     });
 
-
+builder.Services.AddAuthorization();
 builder.Services.AddEndpointsApiExplorer();
-builder.Services.AddSwaggerGen();
+builder.Services.AddSwaggerGen(options =>
+{
+    options.AddSecurityDefinition(
+        "Bearer",
+        new OpenApiSecurityScheme
+        {
+            Name = "Authorization",
+            Type = SecuritySchemeType.Http,
+            Scheme = "Bearer",
+            BearerFormat = "JWT",
+            In = ParameterLocation.Header,
+            Description =
+                "Enter your JWT token in the format: Bearer {your token}"
+        });
 
+    options.AddSecurityRequirement(
+        new OpenApiSecurityRequirement
+        {
+            {
+                new OpenApiSecurityScheme
+                {
+                    Reference = new OpenApiReference
+                    {
+                        Type = ReferenceType.SecurityScheme,
+                        Id = "Bearer"
+                    }
+                },
+                Array.Empty<string>()
+            }
+        });
+});
 
 var app = builder.Build();
 
@@ -74,16 +101,14 @@ if (app.Environment.IsDevelopment())
 }
 
 app.UseHttpsRedirection();
-
-
-// Authentication MUST come before Authorization
 app.UseAuthentication();
 app.UseAuthorization();
-
 app.MapControllers();
 
 app.MapGet(
     "/",
     () => Results.Ok("Task Management API is running."));
+
+await RoleSeeder.SeedRolesAsync(app.Services);
 
 app.Run();

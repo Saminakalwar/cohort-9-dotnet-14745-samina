@@ -1,5 +1,4 @@
-namespace TaskManagement.Domain.Entities;
-   
+namespace TaskManagement.Domain.Entities;   
 using TaskManagement.Domain.Common;
 
 public class Category : AuditableEntity
