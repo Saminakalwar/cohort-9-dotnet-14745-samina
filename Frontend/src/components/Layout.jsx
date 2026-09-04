@@ -3,6 +3,7 @@ import { useLocation } from "react-router-dom";
 import Header from "./Header";
 import Sidebar from "./Sidebar";
 import API from "../services/api";
+import { getUserFromToken } from "../services/api";
 
 const titles = {
   "/dashboard": "Dashboard",
@@ -16,9 +17,23 @@ export default function Layout({ children }) {
   const location = useLocation();
 
   useEffect(() => {
-    API.get("/Auth/profile")
-      .then((res) => setUser(res.data))
-      .catch(() => {});
+    const loadProfile = async () => {
+      try {
+        const response = await API.get("/Auth/profile");
+
+        const tokenUser = getUserFromToken();
+
+        setUser({
+          ...response.data,
+          role: tokenUser?.role || "User",
+          isAdmin: tokenUser?.isAdmin || false,
+        });
+      } catch (error) {
+        console.error("Failed to load profile", error);
+      }
+    };
+
+    loadProfile();
   }, []);
 
   const title =
@@ -33,7 +48,7 @@ export default function Layout({ children }) {
 
   return (
     <div className="app-shell">
-      <Sidebar open={menuOpen} onClose={() => setMenuOpen(false)} />
+      <Sidebar user={user} open={menuOpen} onClose={() => setMenuOpen(false)} />
       <div className="main-area">
         <Header
           title={title}
