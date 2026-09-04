@@ -10,4 +10,6 @@ public class TaskResponse
     public Guid CategoryId {get; set;}
     public string? CategoryName {get; set;}
     public string AssignedUserId { get; set;} = string.Empty;
+    public string? AssignedUserName { get; set; }
+    public string? AssignedUserEmail { get; set; }
 }

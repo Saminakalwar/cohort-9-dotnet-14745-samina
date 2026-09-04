@@ -82,7 +82,17 @@ public class TaskService : ITaskService
             Status = (int)t.Status,
             CategoryId = t.CategoryId,
             CategoryName = t.Category.Name,
-            AssignedUserId = t.AssignedUserId
+            AssignedUserId = t.AssignedUserId,
+
+            AssignedUserName = _context.Users
+                .Where(u => u.Id == t.AssignedUserId)
+                .Select(u => $"{u.FirstName} {u.LastName}")
+                .FirstOrDefault(),
+
+            AssignedUserEmail = _context.Users
+                .Where(u => u.Id == t.AssignedUserId)
+                .Select(u => u.Email)
+                .FirstOrDefault()
 
         }).ToListAsync();
 
@@ -114,7 +124,16 @@ public class TaskService : ITaskService
                 Status = (int)t.Status,
                 CategoryId = t.CategoryId,
                 CategoryName = t.Category.Name,
-                AssignedUserId = t.AssignedUserId
+                AssignedUserId = t.AssignedUserId,
+                AssignedUserName = _context.Users
+                .Where(u => u.Id == t.AssignedUserId)
+                .Select(u => $"{u.FirstName} {u.LastName}")
+                .FirstOrDefault(),
+
+            AssignedUserEmail = _context.Users
+                .Where(u => u.Id == t.AssignedUserId)
+                .Select(u => u.Email)
+                .FirstOrDefault()
             })
             .FirstOrDefaultAsync();
 

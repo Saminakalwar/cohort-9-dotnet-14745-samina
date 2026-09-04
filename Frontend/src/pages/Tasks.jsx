@@ -4,6 +4,7 @@ import toast from "react-hot-toast";
 import API from "../services/api";
 import DeleteModal from "../components/DeleteModal";
 import { Badge } from "./Dashboard";
+import { getUserFromToken } from "../services/api";
 
 export default function Tasks() {
   const [tasks, setTasks] = useState([]);
@@ -11,6 +12,9 @@ export default function Tasks() {
   const [status, setStatus] = useState("");
   const [priority, setPriority] = useState("");
   const [deleteTask, setDeleteTask] = useState(null);
+
+  const currentUser = getUserFromToken();
+  const isAdmin = currentUser?.isAdmin;
 
   const loadTasks = () => API.get("/Task").then((res) => setTasks(res.data));
 
@@ -42,7 +46,11 @@ export default function Tasks() {
       <div className="page-heading">
         <div>
           <h2>Tasks</h2>
-          <p>Manage and track your tasks.</p>
+          <p>
+            {isAdmin
+              ? "Manage and track the tasks."
+              : "Manage and track your tasks."}
+          </p>
         </div>
         <Link className="btn btn-primary" to="/tasks/new">
           + New Task
@@ -70,42 +78,71 @@ export default function Tasks() {
         </select>
       </div>
 
-      <section className="card">
-        {filtered.length === 0 ? (
-          <div className="empty">No matching tasks found.</div>
-        ) : (
-          <div className="table-wrap">
+      {/* Tasks */}
+      {filtered.length > 0 && (
+        <section className="card tasks-table-card">
+          {/* ================= DESKTOP TABLE ================= */}
+          <div className="table-wrap desktop-table">
             <table>
               <thead>
                 <tr>
-                  <th>Task</th>
+                  <th>Title</th>
+
+                  {isAdmin && <th>Assigned To</th>}
+
                   <th>Category</th>
                   <th>Priority</th>
                   <th>Status</th>
                   <th>Due Date</th>
-                  <th>Actions</th>
+                  <th className="actions-header">Actions</th>
                 </tr>
               </thead>
+
               <tbody>
                 {filtered.map((task) => (
                   <tr key={task.id}>
-                    <td>
+                    {/* Title */}
+                    <td className="task-title-cell">
                       <Link className="task-title" to={`/tasks/${task.id}`}>
                         {task.title}
                       </Link>
+
                       <small>{task.description || "No description"}</small>
                     </td>
+
+                    {/* Admin: Assigned User Name Only */}
+                    {isAdmin && (
+                      <td>
+                        <div className="task-assignee">
+                          <strong>
+                            {task.assignedUserName || "Unknown user"}
+                          </strong>
+                        </div>
+                      </td>
+                    )}
+
+                    {/* Category */}
                     <td>{task.categoryName || "-"}</td>
+
+                    {/* Priority */}
                     <td>
                       <Badge type="priority" value={task.priority} />
                     </td>
+
+                    {/* Status */}
                     <td>
                       <Badge type="status" value={task.status} />
                     </td>
-                    <td>{formatDate(task.dueDate)}</td>
+
+                    {/* Due Date */}
+                    <td className="due-date">{formatDate(task.dueDate)}</td>
+
+                    {/* Actions */}
                     <td className="actions">
                       <Link to={`/tasks/${task.id}`}>View</Link>
+
                       <Link to={`/tasks/${task.id}/edit`}>Edit</Link>
+
                       <button onClick={() => setDeleteTask(task)}>
                         Delete
                       </button>
@@ -115,9 +152,72 @@ export default function Tasks() {
               </tbody>
             </table>
           </div>
-        )}
-      </section>
 
+          {/* ================= MOBILE CARDS ================= */}
+          <div className="mobile-task-list">
+            {filtered.map((task) => (
+              <div className="mobile-task-card" key={task.id}>
+                {/* Title */}
+                <div className="mobile-task-header">
+                  <div>
+                    <Link
+                      className="mobile-task-title"
+                      to={`/tasks/${task.id}`}
+                    >
+                      {task.title}
+                    </Link>
+
+                    <p>{task.description || "No description"}</p>
+                  </div>
+                </div>
+
+                {/* Badges */}
+                <div className="mobile-task-badges">
+                  <Badge type="status" value={task.status} />
+
+                  <Badge type="priority" value={task.priority} />
+
+                  <span className="category-badge">
+                    {task.categoryName || "No category"}
+                  </span>
+                </div>
+
+                {/* Admin: Assigned User Name Only */}
+                {isAdmin && (
+                  <div className="mobile-assignee">
+                    <span>Assigned to</span>
+
+                    <strong>{task.assignedUserName || "Unknown user"}</strong>
+                  </div>
+                )}
+
+                {/* Bottom */}
+                <div className="mobile-task-footer">
+                  <span className="mobile-due-date">
+                    Due {formatDate(task.dueDate)}
+                  </span>
+
+                  <div className="mobile-actions">
+                    <Link to={`/tasks/${task.id}`} title="View">
+                      👁
+                    </Link>
+
+                    <Link to={`/tasks/${task.id}/edit`} title="Edit">
+                      ✎
+                    </Link>
+
+                    <button onClick={() => setDeleteTask(task)} title="Delete">
+                      🗑
+                    </button>
+                  </div>
+                </div>
+              </div>
+            ))}
+          </div>
+        </section>
+      )}
+
+      {/* Delete Modal */}
       {deleteTask && (
         <DeleteModal
           taskTitle={deleteTask.title}
@@ -131,5 +231,10 @@ export default function Tasks() {
 
 function formatDate(date) {
   if (!date) return "-";
-  return new Date(date).toLocaleDateString();
+
+  return new Date(date).toLocaleDateString("en-US", {
+    month: "short",
+    day: "numeric",
+    year: "numeric",
+  });
 }

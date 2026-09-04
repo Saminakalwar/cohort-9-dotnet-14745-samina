@@ -37,13 +37,13 @@ export default function Sidebar({ open, onClose, user }) {
           <NavLink to="/profile" className={linkClass} onClick={onClose}>
             <span>◯</span> Profile
           </NavLink>
-
-          {isAdmin && (
-            <div className="admin-badge">
-              <span>ADMIN</span>
-            </div>
-          )}
         </nav>
+
+        {/* {isAdmin && (
+          <div className="admin-badge">
+            <span>ADMIN</span>
+          </div>
+        )} */}
 
         <button className="logout-button" onClick={logout}>
           <span>↪</span> Logout

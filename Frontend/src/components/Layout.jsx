@@ -15,6 +15,7 @@ export default function Layout({ children }) {
   const [user, setUser] = useState(null);
   const [menuOpen, setMenuOpen] = useState(false);
   const location = useLocation();
+  console.log(getUserFromToken());
 
   useEffect(() => {
     const loadProfile = async () => {

@@ -21,15 +21,14 @@ export default function Header({ title, user, onMenuToggle }) {
       <h1 className="page-title">{title}</h1>
 
       <button className="user-button" onClick={() => navigate("/profile")}>
+        {user?.isAdmin && (
+          <span className="text-xs font-semibold text-indigo-600">ADMIN</span>
+        )}
         <span className="avatar">{initials}</span>
 
         <span className="user-name">
           {user?.firstName} {user?.lastName}
         </span>
-
-        {user?.isAdmin && (
-          <span className="text-xs font-semibold text-indigo-600">ADMIN</span>
-        )}
       </button>
     </header>
   );

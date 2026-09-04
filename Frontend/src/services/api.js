@@ -12,17 +12,17 @@ export const getUserFromToken = () => {
   try {
     const payload = JSON.parse(atob(token.split(".")[1]));
 
+    const roles =
+      payload["http://schemas.microsoft.com/ws/2008/06/identity/claims/role"] ||
+      payload.role;
+
+    const roleArray = roles ? (Array.isArray(roles) ? roles : [roles]) : [];
+
     return {
       id: payload.sub,
       email: payload.email,
-      role:
-        payload[
-          "http://schemas.microsoft.com/ws/2008/06/identity/claims/role"
-        ] || payload.role,
-      isAdmin:
-        (payload[
-          "http://schemas.microsoft.com/ws/2008/06/identity/claims/role"
-        ] || payload.role) === "Admin",
+      role: roleArray,
+      isAdmin: roleArray.includes("Admin"),
     };
   } catch {
     return null;

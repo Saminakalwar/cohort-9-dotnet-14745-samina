@@ -23,21 +23,17 @@ export default function Signup() {
     setLoading(true);
 
     try {
-      // Create account
       await API.post("/Auth/register", form);
 
-      toast.success("Account created successfully.");
-
-      // Automatically login
       const loginResponse = await API.post("/Auth/login", {
         email: form.email,
         password: form.password,
       });
 
-      // Save JWT
       localStorage.setItem("token", loginResponse.data.token);
 
-      // Go directly to dashboard
+      toast.success("Account created successfully!");
+
       navigate("/dashboard");
     } catch (err) {
       toast.error(err.response?.data?.message || "Registration failed.");
