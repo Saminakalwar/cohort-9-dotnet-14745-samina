@@ -1,16 +1,28 @@
-# cohort-9-dotnet-14745-samina
-
-Cohort 9 — .NET Fullstack (.NET+ReactJS) assignment for Samina
-
 # TaskFlow — Task Management Tool
 
 A full-stack Task Management application built using **ASP.NET Core Web API, React.js, Entity Framework Core, SQL Server, ASP.NET Core Identity, and JWT authentication**.
 
-The application provides secure user authentication, role-based authorization, task management, categories, user profiles, and a responsive frontend interface.
+The application provides:
+
+- User registration and login
+- JWT-based authentication
+- Role-based authorization
+- Admin and regular-user functionality
+- Task management
+- Task categories
+- Task assignment
+- User profile
+- Responsive React frontend
+- SQL Server persistence
+- Swagger/OpenAPI API documentation
+- Logging and centralized exception handling
+- Unit and integration testing structure
+- SonarQube Cloud code-quality analysis
+- GitHub Actions CI
 
 ---
 
-## Table of Contents
+# Table of Contents
 
 - [Project Overview](#project-overview)
 - [Features](#features)
@@ -18,52 +30,74 @@ The application provides secure user authentication, role-based authorization, t
 - [Project Architecture](#project-architecture)
 - [Prerequisites](#prerequisites)
 - [Project Setup](#project-setup)
-  - [Clone the Repository](#1-clone-the-repository)
+  - [Clone Repository](#1-clone-the-repository)
   - [Backend Setup](#2-backend-setup)
   - [Database Setup](#3-database-setup)
-  - [Run the Backend](#4-run-the-backend)
-  - [Frontend Setup](#5-frontend-setup)
-  - [Run the Frontend](#6-run-the-frontend)
+  - [Apply Database Migrations](#4-apply-database-migrations)
+  - [Run Backend](#5-run-the-backend)
+  - [Open Swagger](#6-open-swagger)
+  - [Frontend Setup](#7-frontend-setup)
+  - [Run Frontend](#8-run-the-frontend)
 
-- [Authentication and Authorization](#authentication-and-authorization)
-- [How to Test the Application](#how-to-test-the-application)
-- [Testing the JWT Flow](#testing-the-jwt-flow)
+- [Application Usage](#application-usage)
+  - [Registration](#registration)
+  - [Login](#login)
+  - [JWT Authentication](#jwt-authentication)
+  - [Dashboard](#dashboard)
+  - [Task Management](#task-management)
+  - [Categories](#categories)
+  - [Profile](#profile)
+  - [Logout](#logout)
+
 - [Role-Based Access](#role-based-access)
-- [Task Management Flow](#task-management-flow)
-- [Frontend Structure](#frontend-structure)
-- [Backend Structure](#backend-structure)
-- [Database and Migrations](#database-and-migrations)
-- [API Documentation](#api-documentation)
-- [Logging and Error Handling](#logging-and-error-handling)
-- [SonarQube](#sonarqube)
-- [Git Workflow](#git-workflow)
+- [How to Test Authentication](#how-to-test-authentication)
+- [How to Test Authorization](#how-to-test-authorization)
+- [Swagger API Testing](#swagger-api-testing)
+- [Frontend API Communication](#frontend-api-communication)
+- [Database and EF Core](#database-and-ef-core)
+- [Logging and Exception Handling](#logging-and-exception-handling)
+- [Automated Testing](#automated-testing)
+- [SonarQube and GitHub Actions](#sonarqube-and-github-actions)
 - [Troubleshooting](#troubleshooting)
-- [Future Improvements](#future-improvements)
+- [Security Notes](#security-notes)
+- [Final Verification Checklist](#final-verification-checklist)
 
 ---
 
 # Project Overview
 
-**TaskFlow** is a task management system designed to allow authenticated users to manage and track tasks.
+**TaskFlow** is a full-stack task management system.
 
-The application follows a **Clean Architecture** approach on the backend to separate business logic, application logic, infrastructure concerns, and API responsibilities.
+The backend is implemented using ASP.NET Core Web API and follows a **Clean Architecture** structure. The frontend is implemented using React.js and communicates with the backend through REST APIs.
 
-The system supports:
+The application uses:
 
-- User registration
-- User login
-- JWT-based authentication
-- Protected API endpoints
-- Role-based authorization
-- Admin and regular-user behavior
-- Task management
-- Task categories
-- User profiles
-- Responsive React frontend
-- SQL Server persistence
-- API testing through Swagger
-- Logging and exception handling
-- Code quality analysis through SonarQube
+```text
+React.js
+   │
+   │ HTTP / Axios
+   ▼
+ASP.NET Core Web API
+   │
+   ├── Authentication / Authorization
+   ├── Application Services
+   ├── Domain
+   ├── Infrastructure
+   └── Persistence
+           │
+           ▼
+       SQL Server
+```
+
+Authentication is implemented using:
+
+```text
+ASP.NET Core Identity
+        +
+JWT Bearer Authentication
+        +
+Role-Based Authorization
+```
 
 ---
 
@@ -77,27 +111,78 @@ The system supports:
 - JWT token generation
 - JWT token validation
 - Protected API endpoints
+- Automatic JWT attachment to frontend API requests
 - Logout through frontend token removal
 
 ## Authorization
 
-The application supports role-based access.
+The application supports:
 
-### Admin
+- Administrator users
+- Regular users
 
-Administrators can access administrative functionality and view all tasks.
+The frontend displays different navigation options according to the user's role, while the backend remains responsible for actual authorization enforcement.
 
-### Regular User
+## Task Management
 
-Regular users can access their own task-related functionality.
+Tasks support information such as:
 
-The frontend reflects the user's role by displaying:
+- Title
+- Description
+- Due date
+- Priority
+- Status
+- Category
+- Assigned user
 
-- **All Tasks** for administrators
-- **My Tasks** for regular users
-- An **ADMIN** indicator for administrators
+## Task Priority
 
-> Frontend role visibility is only for user experience. Actual authorization is enforced by the backend.
+The application supports:
+
+```text
+Low
+Medium
+High
+Critical
+```
+
+## Task Status
+
+The application supports:
+
+```text
+Pending
+InProgress
+Completed
+```
+
+## Categories
+
+Tasks can be associated with categories.
+
+A category can contain multiple tasks.
+
+## User Profile
+
+The profile page displays authenticated user information such as:
+
+- First name
+- Last name
+- Email
+- Role information
+
+## Responsive Frontend
+
+The frontend includes:
+
+- Responsive sidebar
+- Mobile menu
+- Header
+- Dashboard
+- Tasks page
+- Profile page
+- Login page
+- Registration page
 
 ---
 
@@ -123,15 +208,18 @@ The frontend reflects the user's role by displaying:
 - React Router
 - Axios
 - React Hot Toast
-- Tailwind CSS / CSS
+- Tailwind CSS
 - JavaScript
+- Vite
 
-## Development Tools
+The frontend package configuration contains scripts for development, production build, linting, and preview.
+
+## Development and CI Tools
 
 - Visual Studio Code
 - C# Dev Kit
 - SQL Server Developer Edition
-- SQL Server Management Studio (SSMS)
+- SQL Server Management Studio
 - Git
 - GitHub
 - GitHub Desktop
@@ -161,17 +249,21 @@ Backend/
     └── TaskManagement.IntegrationTests/
 ```
 
+The solution contains the API, Application, Domain, Infrastructure, Persistence, Unit Tests, and Integration Tests projects.
+
 ## Domain
 
 Contains the core business entities and enums.
 
-Examples include:
+Main entities include:
 
-- `ApplicationUser`
-- `TaskItem`
-- `Category`
+```text
+ApplicationUser
+TaskItem
+Category
+```
 
-Enums include:
+Main enums include:
 
 ```text
 TaskPriority
@@ -179,55 +271,44 @@ TaskStatus
 UserRole
 ```
 
-The domain layer does not depend on infrastructure or API implementation details.
-
----
+The Domain layer contains business concepts and does not depend on API implementation details.
 
 ## Application
 
-Contains application-level abstractions and DTOs.
-
-Examples:
+Contains application-level logic and abstractions, including:
 
 ```text
-DTOs/
-Interfaces/
-Services/
+DTOs
+Interfaces
+Services
 ```
 
-Interfaces define contracts that are implemented by infrastructure components.
-
----
+Application interfaces define contracts used by implementations in other layers.
 
 ## Persistence
 
-Responsible for database-related functionality.
+Responsible for database-related functionality, including:
 
-It contains:
-
-- Entity Framework Core `DbContext`
+- Entity Framework Core
+- DbContext
 - Identity configuration
 - Database configuration
 - Entity relationships
 - EF Core migrations
 
----
-
 ## Infrastructure
 
 Contains implementations of application services and external concerns.
 
-Authentication-related functionality is handled here, including the authentication service and JWT service.
-
----
+Authentication-related functionality, including authentication/JWT services, is handled here.
 
 ## API
 
-The API layer contains:
+Contains:
 
 - Controllers
-- Middleware configuration
-- Dependency injection setup
+- Middleware
+- Dependency injection configuration
 - Authentication configuration
 - Authorization configuration
 - Swagger configuration
@@ -237,13 +318,14 @@ The API layer contains:
 
 # Prerequisites
 
-Before running the project, install:
+Install the following before running the project:
 
-1. **.NET 10 SDK**
-2. **Node.js and npm**
-3. **SQL Server Developer Edition**
-4. **SQL Server Management Studio**
-5. **Git**
+1. .NET 10 SDK
+2. Node.js
+3. npm
+4. SQL Server Developer Edition
+5. SQL Server Management Studio (SSMS)
+6. Git
 
 Verify .NET:
 
@@ -281,7 +363,7 @@ Navigate into the project:
 cd <repository-folder>
 ```
 
-The repository contains both backend and frontend components.
+The repository contains both the backend and frontend.
 
 ---
 
@@ -293,240 +375,345 @@ Navigate to the backend:
 cd Backend
 ```
 
-Restore dependencies:
+Restore NuGet dependencies:
 
 ```bash
 dotnet restore
 ```
 
-Build the complete backend:
+Build the solution:
 
 ```bash
 dotnet build
 ```
 
-The build should complete successfully before running the application.
+The solution should build successfully before running the API.
 
 ---
 
 # 3. Database Setup
 
-The application uses **SQL Server** with Entity Framework Core.
+The application uses **SQL Server with Entity Framework Core**.
 
-Make sure SQL Server is running.
+Make sure SQL Server is installed and running.
 
-Create or update the connection string in the appropriate backend configuration file.
+Open SQL Server Management Studio and make sure you can connect to your local SQL Server instance.
 
-Example:
+The application reads its database connection string from:
+
+```text
+Backend/src/TaskManagement.API/appsettings.json
+```
+
+The connection string configuration is:
 
 ```json
 {
   "ConnectionStrings": {
-    "DefaultConnection": "Server=localhost;Database=TaskManagementDb;Trusted_Connection=True;TrustServerCertificate=True;"
+    "DefaultConnection": "YOUR_LOCAL_SQL_SERVER_CONNECTION_STRING"
   }
 }
 ```
 
-> Use the connection string appropriate for the local SQL Server installation.
+Use a connection string appropriate for the SQL Server installation on the machine where the project is being run.
+
+For example, a local SQL Server setup may use:
+
+```text
+Server=localhost;Database=TaskManagementDb;Trusted_Connection=True;TrustServerCertificate=True;
+```
+
+Do not use this example blindly if your SQL Server instance has a different server or instance name.
 
 ---
 
-## Apply EF Core Migrations
+# 4. Apply Database Migrations
 
-From the `Backend` directory, run the EF migration command according to the solution/project configuration.
+The project uses Entity Framework Core migrations to create/update the database schema.
 
-For example:
-
-```bash
-dotnet ef database update
-```
-
-If the EF CLI tool is not installed:
-
-```bash
-dotnet tool install --global dotnet-ef
-```
-
-Verify:
+First make sure the EF CLI is installed:
 
 ```bash
 dotnet ef --version
 ```
 
-The database should now contain the tables required by the application, including Identity-related tables.
+If it is not installed:
+
+```bash
+dotnet tool install --global dotnet-ef
+```
+
+Verify again:
+
+```bash
+dotnet ef --version
+```
+
+Then apply the existing migrations:
+
+```bash
+dotnet ef database update
+```
+
+If the EF CLI requires explicit project selection because of the multi-project architecture, use:
+
+```bash
+dotnet ef database update \
+  --project src/TaskManagement.Persistence \
+  --startup-project src/TaskManagement.API
+```
+
+After the migration completes, verify the database in SSMS.
+
+The database should contain the application tables as well as the ASP.NET Core Identity tables.
+
+> **Important:** Use the migration command that matches the solution's EF Core configuration. Do not create a new migration just to run the existing application.
 
 ---
 
-# 4. Run the Backend
+# 5. Run the Backend
 
-From the backend directory:
+From the `Backend` directory:
 
 ```bash
 dotnet run --project src/TaskManagement.API
 ```
 
-The terminal will display the API URL.
-
-For example:
+The configured HTTP development URL is:
 
 ```text
 http://localhost:5135
 ```
 
-or another configured port depending on the local launch configuration.
+The application also has an HTTPS profile configured for:
+
+```text
+https://localhost:7025
+```
+
+The development launch configuration starts Swagger automatically.
+
+For the simplest local setup, use:
+
+```text
+http://localhost:5135
+```
 
 ---
 
-# 5. Verify Swagger
+# 6. Open Swagger
 
-Open:
+Once the backend is running, open:
 
 ```text
-http://localhost:<port>/swagger
+http://localhost:5135/swagger
 ```
 
-Swagger should display the available API endpoints.
+Swagger provides an interactive interface for testing the API.
 
-Swagger is useful for testing:
+Use Swagger to test:
 
 - Registration
 - Login
 - Protected endpoints
-- Task endpoints
-- Other API operations
+- Task APIs
+- Category APIs
+- Profile-related APIs
+- Administrative APIs
+
+Swagger is configured with Bearer JWT authentication in the API.
 
 ---
 
-# 6. Frontend Setup
+# 7. Frontend Setup
 
-Open another terminal.
+Open a second terminal.
 
-Navigate to the frontend directory:
+From the repository root:
 
 ```bash
 cd Frontend
 ```
 
-Install dependencies:
+Install frontend dependencies:
 
 ```bash
 npm install
 ```
 
-Configure the frontend API URL using the project's environment configuration.
-
-For local development, the frontend should point to the backend running on localhost.
-
-Example:
-
-```env
-VITE_API_URL=http://localhost:<backend-port>
-```
-
-Use the actual environment variable name already defined by the project.
+The project uses React, Axios, React Router, React Hot Toast, Tailwind CSS and Vite.
 
 ---
 
-# 7. Run the Frontend
+# Frontend Environment Configuration
 
-Start the React development server:
+Create/configure the frontend `.env` file:
+
+```env
+VITE_API_URL=http://localhost:5135/api
+```
+
+This is the API URL currently used by the frontend.
+
+The Axios configuration reads `VITE_API_URL` and uses `http://localhost:5135/api` as its local fallback.
+
+The current development environment configuration points to:
+
+```text
+http://localhost:5135/api
+```
+
+> After changing `.env`, restart the Vite development server.
+
+---
+
+# 8. Run the Frontend
+
+From the `Frontend` directory:
 
 ```bash
 npm run dev
 ```
 
-The terminal will provide the frontend URL, commonly something similar to:
+Vite will display the frontend URL in the terminal.
+
+The usual development URL is:
 
 ```text
 http://localhost:5173
 ```
 
-Open the displayed URL in a browser.
+The frontend package defines `npm run dev` as the Vite development command.
+
+Open the URL shown by Vite in your browser.
 
 ---
 
-# Authentication and Authorization
+# Complete Startup Order
 
-TaskFlow uses:
+For the first run, follow this exact order:
 
 ```text
-ASP.NET Core Identity
-        +
-JWT Bearer Authentication
-        +
-Role-Based Authorization
+1. Start SQL Server
+        ↓
+2. Configure database connection string
+        ↓
+3. Apply EF Core migrations
+        ↓
+4. Start Backend
+        ↓
+5. Open Swagger
+        ↓
+6. Start Frontend
+        ↓
+7. Open React application
+        ↓
+8. Register a user
+        ↓
+9. Login
+        ↓
+10. Test Dashboard
+        ↓
+11. Test Tasks
+        ↓
+12. Test Profile
+        ↓
+13. Test Admin/User behavior
+        ↓
+14. Test Logout
 ```
 
 ---
 
-## Authentication Flow
+# Application Usage
 
-The authentication process works as follows:
+## Registration
+
+Open the frontend registration page.
+
+Enter valid user information and submit the form.
+
+The registration request is sent to the ASP.NET Core API.
+
+ASP.NET Core Identity validates the user information and stores the user in the database.
+
+After successful registration, proceed to login.
+
+---
+
+# Login
+
+Open the login page.
+
+Enter the registered user's credentials.
+
+The frontend sends the login request to the backend.
+
+On successful authentication:
 
 ```text
-User
- │
- │ Login credentials
- ▼
-React Frontend
- │
- │ POST Login
- ▼
-ASP.NET Core API
- │
- ▼
-AuthService
- │
- ▼
+Credentials
+     ↓
 ASP.NET Core Identity
- │
- │ Validate user credentials
- ▼
-JWT Service
- │
- │ Generate JWT
- ▼
-API
- │
- │ JWT token
- ▼
-React Frontend
- │
- │ Store token
- ▼
-Protected API Requests
+     ↓
+Credentials validated
+     ↓
+JWT generated
+     ↓
+JWT returned to frontend
+     ↓
+Token stored in browser
+     ↓
+User enters authenticated application
 ```
+
+The JWT is then used for protected API requests.
 
 ---
 
 # JWT Authentication
 
-After successful login, the backend generates a JWT token.
+The application uses JWT Bearer Authentication.
 
-The frontend stores the token and sends it with requests to protected endpoints.
-
-The request uses:
+A protected request contains:
 
 ```http
 Authorization: Bearer <JWT_TOKEN>
 ```
 
-The backend then:
+The backend validates:
 
-1. Reads the Authorization header.
-2. Extracts the bearer token.
-3. Validates the JWT.
-4. Validates the signing key.
-5. Validates issuer/audience if configured.
-6. Validates expiration.
-7. Creates the authenticated user principal.
-8. Allows the request to continue.
+1. Token signature
+2. Signing key
+3. Issuer
+4. Audience
+5. Token lifetime
+6. Authentication information
+
+The API configures JWT validation through `JwtSettings`.
+
+The current configuration contains:
+
+```json
+{
+  "JwtSettings": {
+    "SecretKey": "your-development-secret",
+    "Issuer": "TaskManagement",
+    "Audience": "TaskManagementClient",
+    "ExpiryMinutes": 60
+  }
+}
+```
+
+The actual application configuration uses the `JwtSettings` section, with issuer `TaskManagement`, audience `TaskManagementClient`, and a 60-minute token expiry.
+
+> Never commit a real production JWT secret to source control.
 
 ---
 
 # Authentication Middleware
 
-The API configures authentication and authorization during application startup.
+The API configures authentication and authorization as part of the ASP.NET Core request pipeline.
 
 Conceptually:
 
@@ -542,315 +729,37 @@ UseAuthorization()
 Controller
 ```
 
-### `AddAuthentication`
+`AddAuthentication()` configures the authentication services.
 
-Registers authentication services and configures JWT bearer authentication.
+`UseAuthentication()` authenticates the incoming request.
 
-### `UseAuthentication`
+`UseAuthorization()` checks whether the authenticated user is allowed to access the requested endpoint.
 
-Runs authentication middleware for incoming requests.
+The application uses the middleware in this order:
 
-It determines whether the request contains a valid identity.
+```csharp
+app.UseAuthentication();
+app.UseAuthorization();
+app.MapControllers();
+```
 
-### `UseAuthorization`
-
-Checks whether the authenticated identity has permission to access the requested endpoint.
-
-Both configuration and middleware are required.
+This order is configured in the API startup code.
 
 ---
 
-# How to Test the Application
+# Dashboard
 
-The recommended testing flow is:
+After login, the user is redirected to the authenticated application.
 
-```text
-1. Start SQL Server
-2. Start Backend
-3. Verify Swagger
-4. Start Frontend
-5. Register/Login
-6. Obtain JWT
-7. Access protected endpoints
-8. Test role-based behavior
-9. Create and manage tasks
-10. Test logout
-```
+The dashboard provides an overview of the task-management application and authenticated user experience.
 
 ---
 
-# Testing Registration
+# Task Management
 
-Open the frontend registration page.
+The Tasks section allows authenticated users to work with tasks according to their role and permissions.
 
-Provide valid user information.
-
-Submit the form.
-
-Expected result:
-
-```text
-Registration successful
-```
-
-The user should be stored in the Identity database.
-
----
-
-# Testing Login
-
-Navigate to the login page.
-
-Enter valid credentials.
-
-The frontend sends a request to the backend login endpoint.
-
-Expected result:
-
-- Login succeeds.
-- Backend returns a JWT.
-- Frontend stores the token.
-- User is redirected to the application/dashboard.
-
----
-
-# Testing Invalid Login
-
-Try an incorrect password.
-
-Expected behavior:
-
-```text
-401 Unauthorized
-```
-
-The frontend should display an appropriate error message.
-
----
-
-# Testing Protected Endpoints
-
-A protected endpoint cannot be accessed without a valid JWT.
-
-For example:
-
-```http
-GET /api/Auth/protected
-```
-
-### Without token
-
-Expected:
-
-```text
-401 Unauthorized
-```
-
-### With valid token
-
-Expected:
-
-```text
-200 OK
-```
-
-The endpoint should confirm that the request is authenticated.
-
----
-
-# Swagger JWT Testing
-
-Swagger can be used to test protected endpoints.
-
-## Step 1 — Login
-
-Use the login endpoint with valid credentials.
-
-Copy the returned JWT.
-
-## Step 2 — Authorize
-
-Click the **Authorize** button in Swagger.
-
-Enter:
-
-```text
-Bearer <your-token>
-```
-
-or use the format expected by the Swagger security configuration.
-
-## Step 3 — Call Protected Endpoint
-
-Execute the protected endpoint.
-
-A valid token should result in successful authentication.
-
----
-
-# JWT Configuration
-
-The JWT configuration includes a secret signing key.
-
-The secret must be configured correctly.
-
-For example:
-
-```json
-{
-  "Jwt": {
-    "SecretKey": "your-secure-secret-key",
-    "Issuer": "TaskManagementAPI",
-    "Audience": "TaskManagementClient"
-  }
-}
-```
-
-Do not commit real production secrets to source control.
-
----
-
-# Important JWT Issue Encountered During Development
-
-During JWT testing, the API initially returned an error similar to:
-
-```text
-IDX10703: Cannot create Microsoft.IdentityModel.Tokens.SymmetricSecurityKey,
-key length is zero.
-```
-
-The problem was caused by a mismatch between the configuration key expected by the JWT service and the key actually present in `appsettings`.
-
-The JWT service was expecting:
-
-```text
-SecretKey
-```
-
-while the configuration initially used a different property name.
-
-After correcting the configuration and ensuring the signing key was populated, JWT authentication worked successfully.
-
-This demonstrates the importance of keeping:
-
-```text
-appsettings
-        ↓
-JWT configuration
-        ↓
-JWT service
-```
-
-consistent.
-
----
-
-# Role-Based Access
-
-The application supports different behavior for administrators and normal users.
-
-## Administrator
-
-An administrator sees:
-
-```text
-Dashboard
-All Tasks
-Profile
-```
-
-The header/sidebar can also display:
-
-```text
-ADMIN
-```
-
-## Normal User
-
-A normal user sees:
-
-```text
-Dashboard
-My Tasks
-Profile
-```
-
-The `ADMIN` label is not displayed.
-
----
-
-# Important Security Principle
-
-The frontend should **never be considered the security boundary**.
-
-For example, hiding:
-
-```text
-All Tasks
-```
-
-from a normal user does not prevent that user from manually calling the API.
-
-The backend must enforce authorization.
-
-Conceptually:
-
-```text
-Frontend UI
-     │
-     │ visibility
-     ▼
-User experience
-
-Backend Authorization
-     │
-     │ permission enforcement
-     ▼
-Actual security
-```
-
----
-
-# Task Management Flow
-
-A typical task flow is:
-
-```text
-Login
-  ↓
-Dashboard
-  ↓
-Tasks
-  ↓
-Create Task
-  ↓
-Assign Category / User
-  ↓
-Set Priority
-  ↓
-Set Status
-  ↓
-Set Due Date
-  ↓
-Update / Complete Task
-```
-
----
-
-# Task Entity
-
-The `TaskItem` entity contains information such as:
-
-- Title
-- Description
-- Due Date
-- Priority
-- Status
-- Category ID
-- Category
-- Assigned User ID
-
-Example conceptual structure:
+A task can contain:
 
 ```text
 TaskItem
@@ -866,11 +775,35 @@ TaskItem
 └── AssignedUserId
 ```
 
+Typical task flow:
+
+```text
+Create Task
+     ↓
+Enter Title
+     ↓
+Enter Description
+     ↓
+Select Category
+     ↓
+Assign User
+     ↓
+Set Priority
+     ↓
+Set Status
+     ↓
+Set Due Date
+     ↓
+Save
+     ↓
+Update / Complete Task
+```
+
 ---
 
 # Task Priority
 
-The application defines priorities such as:
+Available priorities:
 
 ```text
 Low
@@ -883,7 +816,7 @@ Critical
 
 # Task Status
 
-The application defines statuses such as:
+Available statuses:
 
 ```text
 Pending
@@ -893,7 +826,7 @@ Completed
 
 ---
 
-# Category
+# Categories
 
 Tasks can be associated with categories.
 
@@ -907,60 +840,15 @@ Category
 └── Tasks
 ```
 
-A category can contain multiple tasks.
+A category can be associated with multiple tasks.
 
 ---
 
-# Frontend Structure
+# Profile
 
-The React frontend contains reusable components and pages.
+The Profile page displays information about the currently authenticated user.
 
-Important frontend concepts include:
-
-```text
-React Router
-Axios API communication
-Authentication state
-Protected routes
-Sidebar
-Header
-Dashboard
-Tasks
-Profile
-Login
-Registration
-```
-
-The sidebar supports responsive behavior.
-
-On smaller screens:
-
-```text
-Mobile menu
-     ↓
-Sidebar opens
-     ↓
-Overlay displayed
-     ↓
-Navigation selected
-     ↓
-Sidebar closes
-```
-
----
-
-# Header
-
-The header displays:
-
-- Mobile menu
-- TaskFlow branding
-- Current page title
-- User avatar/initials
-- User name
-- ADMIN indicator when applicable
-
-The user's initials are generated from first and last name.
+The frontend generates the user's initials from their first and last name.
 
 For example:
 
@@ -970,88 +858,428 @@ Samina Kalwar
 SK
 ```
 
+The profile/header can also display administrator information when the authenticated user has the Admin role.
+
 ---
 
 # Logout
 
-Logout removes the stored JWT token from browser storage.
+Logout removes the JWT token stored by the frontend.
 
 The flow is:
 
 ```text
 Click Logout
-    ↓
-Remove token
-    ↓
-Show success notification
-    ↓
+     ↓
+Remove JWT token
+     ↓
+Show logout notification
+     ↓
 Navigate to /login
 ```
 
-Conceptually:
+The frontend removes the token using browser storage and redirects the user to the login page.
 
-```javascript
-localStorage.removeItem("token");
-```
-
-After logout, the user must authenticate again to access protected functionality.
+After logout, the user must authenticate again before accessing protected functionality.
 
 ---
 
-# Backend Structure
+# Role-Based Access
 
-A simplified backend structure is:
+The application supports two main roles:
 
 ```text
-Backend/
-│
-├── src/
-│   │
-│   ├── TaskManagement.API/
-│   │   ├── Controllers/
-│   │   ├── Program.cs
-│   │   └── appsettings.json
-│   │
-│   ├── TaskManagement.Application/
-│   │   ├── DTOs/
-│   │   ├── Interfaces/
-│   │   └── ...
-│   │
-│   ├── TaskManagement.Domain/
-│   │   ├── Entities/
-│   │   ├── Enums/
-│   │   └── Common/
-│   │
-│   ├── TaskManagement.Infrastructure/
-│   │   ├── Services/
-│   │   └── ...
-│   │
-│   └── TaskManagement.Persistence/
-│       ├── DbContext/
-│       ├── Configurations/
-│       └── ...
-│
-└── tests/
-    ├── TaskManagement.UnitTests/
-    └── TaskManagement.IntegrationTests/
+Admin
+User
 ```
 
 ---
 
-# Database and Migrations
+# Administrator
 
-Entity Framework Core is used for database access.
+An administrator can access administrative functionality and view all tasks.
 
-The database contains application data as well as ASP.NET Core Identity data.
+The administrator navigation includes:
 
-Typical Identity tables include users, roles, claims, and related authentication tables.
+```text
+Dashboard
+All Tasks
+Profile
+```
 
-After changing an entity or database model, a new migration can be created.
+The frontend also displays:
+
+```text
+ADMIN
+```
+
+for an administrator.
+
+---
+
+# Regular User
+
+A regular user sees:
+
+```text
+Dashboard
+My Tasks
+Profile
+```
+
+The `ADMIN` indicator is not displayed for a regular user.
+
+---
+
+# Important Security Principle
+
+The frontend role check is for the user interface only.
+
+For example, hiding:
+
+```text
+All Tasks
+```
+
+from a regular user does not provide security by itself.
+
+The backend must enforce authorization.
+
+Therefore:
+
+```text
+Frontend
+   ↓
+Controls UI visibility
+
+Backend
+   ↓
+Enforces actual permissions
+```
+
+This ensures users cannot gain administrative access simply by manually calling an API.
+
+---
+
+# How to Test Authentication
+
+## Test 1 — Registration
+
+1. Start SQL Server.
+2. Start the backend.
+3. Start the frontend.
+4. Open the registration page.
+5. Enter valid user information.
+6. Submit the form.
+7. Confirm that registration succeeds.
+
+---
+
+## Test 2 — Login
+
+1. Open the login page.
+2. Enter the registered credentials.
+3. Submit the form.
+4. Confirm that login succeeds.
+5. Confirm that the user reaches the authenticated application.
+6. Confirm that the JWT is stored by the frontend.
+
+---
+
+## Test 3 — Invalid Login
+
+Enter an incorrect password.
+
+Expected result:
+
+```text
+401 Unauthorized
+```
+
+The frontend should display an appropriate error message.
+
+---
+
+## Test 4 — Protected Endpoint Without JWT
+
+Use Swagger or an API client to call a protected endpoint without authentication.
 
 Example:
 
+```http
+GET /api/Auth/protected
+```
+
+Expected result:
+
+```text
+401 Unauthorized
+```
+
+---
+
+## Test 5 — Protected Endpoint With JWT
+
+Login and obtain the JWT.
+
+Provide the JWT through Swagger's **Authorize** button.
+
+Then call:
+
+```http
+GET /api/Auth/protected
+```
+
+Expected result:
+
+```text
+200 OK
+```
+
+This confirms that JWT authentication is working.
+
+---
+
+# How to Test Authorization
+
+Authorization should be tested using both administrator and regular-user accounts.
+
+## Admin Test
+
+Login using an administrator account.
+
+Verify:
+
+```text
+Dashboard
+All Tasks
+Profile
+ADMIN
+```
+
+are available/displayed as expected.
+
+---
+
+## Regular User Test
+
+Login using a normal user account.
+
+Verify:
+
+```text
+Dashboard
+My Tasks
+Profile
+```
+
+are displayed.
+
+Verify that:
+
+```text
+ADMIN
+```
+
+is not displayed.
+
+---
+
+# Testing an Existing User as Admin
+
+If an administrator account needs to be assigned to an existing user, use the project's administrative endpoint through Swagger if it is available in the running API.
+
+For example, the project supports the make-admin operation using the user's email.
+
+After changing a user's role:
+
+1. Logout.
+2. Login again.
+3. Use the newly issued JWT.
+
+This is important because role information is included in the JWT. A previously issued token may not contain newly assigned role information.
+
+---
+
+# Swagger API Testing
+
+Swagger is available during development at:
+
+```text
+http://localhost:5135/swagger
+```
+
+---
+
+## Swagger Authentication Procedure
+
+### Step 1 — Start Backend
+
 ```bash
-dotnet ef migrations add <MigrationName>
+dotnet run --project src/TaskManagement.API
+```
+
+### Step 2 — Open Swagger
+
+```text
+http://localhost:5135/swagger
+```
+
+### Step 3 — Login
+
+Use the login endpoint.
+
+Copy the JWT returned by the API.
+
+### Step 4 — Authorize Swagger
+
+Click:
+
+```text
+Authorize
+```
+
+Enter:
+
+```text
+Bearer <your-jwt-token>
+```
+
+### Step 5 — Test Protected Endpoints
+
+Execute a protected endpoint.
+
+A valid token should result in successful authentication.
+
+---
+
+# Frontend API Communication
+
+The React application uses Axios for communication with the backend.
+
+The configured API base URL is:
+
+```text
+http://localhost:5135/api
+```
+
+The frontend reads this value from:
+
+```text
+VITE_API_URL
+```
+
+The Axios instance is configured to use the environment variable and has the same localhost API URL as a fallback.
+
+---
+
+# Automatic JWT Attachment
+
+The frontend automatically reads the token from browser storage.
+
+For authenticated API requests it adds:
+
+```http
+Authorization: Bearer <token>
+```
+
+This means protected API requests do not need to manually add the token from every component.
+
+---
+
+# Handling Expired/Invalid Authentication
+
+The frontend also handles `401 Unauthorized` responses.
+
+When a `401` response is received:
+
+```text
+401 Unauthorized
+       ↓
+Remove stored JWT
+       ↓
+Redirect to /login
+```
+
+This behavior is implemented through the Axios response interceptor.
+
+---
+
+# Responsive Frontend
+
+The frontend includes a responsive sidebar.
+
+On smaller screens:
+
+```text
+Mobile Menu
+     ↓
+Sidebar Opens
+     ↓
+Overlay Appears
+     ↓
+User Selects Navigation
+     ↓
+Sidebar Closes
+```
+
+The header includes:
+
+- Mobile menu
+- TaskFlow branding
+- Current page title
+- User initials
+- User name
+- Admin indicator where applicable
+
+---
+
+# Database and EF Core
+
+The application uses:
+
+```text
+ASP.NET Core
+      ↓
+Entity Framework Core
+      ↓
+SQL Server
+```
+
+EF Core is responsible for mapping application entities to database tables.
+
+The Persistence project contains the database context, Identity configuration, relationships, and migrations.
+
+---
+
+# Identity Database
+
+ASP.NET Core Identity manages application users and authentication-related data.
+
+After applying migrations, Identity-related tables should be present in the SQL Server database.
+
+---
+
+# Database Migration Workflow
+
+When database schema changes are introduced:
+
+```text
+Modify Entity
+     ↓
+Create Migration
+     ↓
+Review Migration
+     ↓
+Apply Migration
+     ↓
+Database Updated
+```
+
+Example migration command:
+
+```bash
+dotnet ef migrations add MigrationName
 ```
 
 Then apply it:
@@ -1060,202 +1288,398 @@ Then apply it:
 dotnet ef database update
 ```
 
+For this multi-project solution, explicit project arguments may be required:
+
+```bash
+dotnet ef migrations add MigrationName \
+  --project src/TaskManagement.Persistence \
+  --startup-project src/TaskManagement.API
+```
+
+and:
+
+```bash
+dotnet ef database update \
+  --project src/TaskManagement.Persistence \
+  --startup-project src/TaskManagement.API
+```
+
 ---
 
-# API Documentation
+# Logging and Exception Handling
 
-Swagger/OpenAPI is enabled for the backend.
+The API uses **Serilog** for application logging.
 
-After starting the API, open:
+The application configures:
+
+- Console logging
+- Daily rolling file logs
+
+Log files are written under:
 
 ```text
-http://localhost:<port>/swagger
+logs/
 ```
 
-Swagger allows developers/testers to:
+The API also uses centralized exception-handling middleware.
 
-- View endpoints
-- Inspect request models
-- Execute API calls
-- Test authentication
-- Test protected endpoints
-- Inspect API responses
+The middleware is registered in the request pipeline before the remaining request processing.
+
+This provides a centralized place to handle unexpected application exceptions.
 
 ---
 
-# Logging and Error Handling
+# Automated Testing
 
-The backend uses logging to help diagnose application behavior.
+The solution contains:
 
-Serilog is used as part of the application's logging setup.
+```text
+TaskManagement.UnitTests
+TaskManagement.IntegrationTests
+```
 
-Logging is particularly useful for:
+Run tests from the backend/solution directory:
 
-- Authentication failures
-- Database issues
-- API exceptions
-- Background/application errors
-- Debugging production-like behavior
+```bash
+dotnet test
+```
 
-The application also uses appropriate exception handling rather than exposing unnecessary internal details to API consumers.
+A successful result indicates that the configured automated tests have passed.
+
+For a more complete verification:
+
+```bash
+dotnet restore
+dotnet build
+dotnet test
+```
 
 ---
 
-# SonarQube
+# Frontend Validation
 
-SonarQube Cloud is integrated into the repository to perform automated code quality analysis.
+The frontend provides the following npm scripts:
 
-The project includes GitHub Actions workflow configuration.
-
-The workflow builds the application and performs SonarQube analysis.
-
-The CI workflow is triggered through GitHub Actions.
-
-The build workflow was configured and successfully completed during development.
-
-Important CI configuration considerations include:
-
-- Correct .NET setup
-- Correct Java setup for SonarQube tooling
-- SonarQube project configuration
-- GitHub secrets
-- Correct source paths
-- Successful application build
-
-The GitHub Actions Java setup was updated to:
-
-```yaml
-actions/setup-java@v5
+```bash
+npm run dev
+npm run build
+npm run lint
+npm run preview
 ```
 
-as part of the CI configuration updates.
+These scripts are defined in the project's `package.json`.
+
+For frontend validation:
+
+```bash
+npm run lint
+```
+
+To verify that the production build succeeds:
+
+```bash
+npm run build
+```
+
+---
+
+# SonarQube and GitHub Actions
+
+The project includes SonarQube Cloud code-quality analysis and GitHub Actions CI.
+
+The CI workflow is intended to automatically verify the project during GitHub workflow execution.
+
+The workflow includes the required Java setup for SonarQube analysis.
+
+To verify CI:
+
+1. Push changes to the configured branch.
+2. Open the repository on GitHub.
+3. Open the **Actions** tab.
+4. Select the project's build/CI workflow.
+5. Verify that the workflow completes successfully.
+6. Review SonarQube analysis results when available.
 
 ---
 
 # Git Workflow
 
-Development follows a feature-branch workflow.
+Development is organized using feature branches.
 
-The general process is:
+Typical workflow:
 
 ```text
 develop
-   │
-   ├── feature/authentication
-   │
-   ├── feature/jwt-authentication
-   │
-   ├── feature/frontend
-   │
-   └── other feature branches
+   ↓
+Create Feature Branch
+   ↓
+Implement Feature
+   ↓
+Test Locally
+   ↓
+Commit
+   ↓
+Push Feature Branch
+   ↓
+Create Pull Request
+   ↓
+Review / CI
+   ↓
+Merge
 ```
 
-A feature should normally be created from the latest `develop`.
-
-Example:
+Before pushing changes:
 
 ```bash
-git checkout develop
-git pull origin develop
-git checkout -b feature/<feature-name>
+git status
 ```
 
-After implementation:
+Review the changed files.
+
+Then:
 
 ```bash
 git add .
-git commit -m "Implement <feature>"
-git push origin feature/<feature-name>
+git commit -m "your commit message"
+git push
 ```
 
-Then create a Pull Request targeting:
+---
+
+# Troubleshooting
+
+## Backend Does Not Start
+
+Check:
 
 ```text
-develop
+.NET SDK installed
+SQL Server running
+Connection string configured
+Correct project selected
 ```
 
----
-
-# Recommended Complete Test Procedure
-
-For someone evaluating the project, the following sequence provides a complete demonstration.
-
-## Step 1 — Start SQL Server
-
-Make sure the SQL Server instance is running.
-
----
-
-## Step 2 — Update Configuration
-
-Verify:
-
-- Connection string
-- JWT secret key
-- JWT issuer/audience if configured
-- Frontend API URL
-
----
-
-## Step 3 — Update Database
-
-From the backend:
+Try:
 
 ```bash
-dotnet ef database update
-```
-
----
-
-## Step 4 — Start API
-
-```bash
+dotnet restore
+dotnet build
 dotnet run --project src/TaskManagement.API
 ```
 
 ---
 
-## Step 5 — Open Swagger
+# Swagger Does Not Open
 
-Navigate to:
+Make sure the backend is running.
+
+Use:
 
 ```text
-http://localhost:<port>/swagger
+http://localhost:5135/swagger
 ```
 
-Verify that the API is running.
+Swagger is configured for the Development environment.
 
 ---
 
-## Step 6 — Register a User
+# Frontend Cannot Connect to Backend
 
-Use the registration endpoint or frontend registration page.
+Check that the backend is running at:
 
-Create a normal user.
+```text
+http://localhost:5135
+```
+
+Then verify the frontend `.env`:
+
+```env
+VITE_API_URL=http://localhost:5135/api
+```
+
+Restart the frontend after changing `.env`.
+
+Also check the browser console for Axios/network errors.
 
 ---
 
-## Step 7 — Login
+# CORS Error
 
-Use valid credentials.
+The backend currently allows the frontend development origin:
 
-Confirm that a JWT is returned and the frontend successfully authenticates.
+```text
+http://localhost:5173
+```
+
+The API configures a CORS policy for this frontend origin.
+
+If the frontend is running on a different port, update the backend CORS configuration accordingly.
 
 ---
 
-## Step 8 — Test Protected Endpoint
+# API Returns 401 Unauthorized
 
-Call a protected endpoint without a token.
+Check:
 
-Expected:
+1. The user is logged in.
+2. A JWT exists in browser storage.
+3. The JWT has not expired.
+4. The Authorization header contains:
+
+   ```text
+   Bearer <token>
+   ```
+
+5. The issuer is correct.
+6. The audience is correct.
+7. The signing key is correct.
+8. `UseAuthentication()` is configured.
+9. `UseAuthorization()` is configured.
+10. The endpoint actually requires authentication.
+
+---
+
+# JWT Configuration Error
+
+If the application reports a JWT signing-key error, verify that the configuration section is named:
+
+```text
+JwtSettings
+```
+
+and contains:
+
+```text
+SecretKey
+Issuer
+Audience
+ExpiryMinutes
+```
+
+The API reads the `JwtSettings` section directly.
+
+---
+
+# Admin Role Not Appearing
+
+If a user has recently been assigned the Admin role:
+
+1. Logout.
+2. Login again.
+3. Obtain a new JWT.
+4. Refresh the application.
+
+The frontend determines the current role from the JWT claims.
+
+---
+
+# Database Connection Error
+
+Check:
+
+- SQL Server service is running.
+- SQL Server instance name is correct.
+- Database name is correct.
+- Authentication method is correct.
+- Connection string is correct.
+- Required database migrations have been applied.
+
+---
+
+# Port Conflict
+
+If port `5135` is already in use, stop the process using that port or use the configured launch profile/port appropriate for your environment.
+
+If the backend port changes, update:
+
+```env
+VITE_API_URL=http://localhost:<new-port>/api
+```
+
+and restart the frontend.
+
+---
+
+# Security Notes
+
+Do not commit real secrets to GitHub.
+
+Do not commit:
+
+- Production JWT secrets
+- Database passwords
+- API keys
+- Production connection credentials
+
+For production environments, use environment variables, secret managers, or deployment-specific configuration.
+
+The development JWT configuration should be treated as development-only configuration.
+
+---
+
+# Complete End-to-End Testing Procedure
+
+Use the following sequence when demonstrating or evaluating the application.
+
+## Backend
+
+```bash
+cd Backend
+dotnet restore
+dotnet build
+dotnet ef database update
+dotnet run --project src/TaskManagement.API
+```
+
+Verify:
+
+```text
+http://localhost:5135/swagger
+```
+
+---
+
+## Frontend
+
+Open another terminal:
+
+```bash
+cd Frontend
+npm install
+npm run dev
+```
+
+Verify the frontend URL displayed by Vite, normally:
+
+```text
+http://localhost:5173
+```
+
+---
+
+## Authentication Test
+
+```text
+Register
+   ↓
+Login
+   ↓
+JWT generated
+   ↓
+Dashboard
+```
+
+---
+
+## Protected Endpoint Test
+
+Without JWT:
 
 ```text
 401 Unauthorized
 ```
 
-Then provide a valid JWT and call it again.
-
-Expected:
+With valid JWT:
 
 ```text
 200 OK
@@ -1263,349 +1687,294 @@ Expected:
 
 ---
 
-## Step 9 — Test Frontend
-
-Open the React application.
+## Regular User Test
 
 Verify:
 
 ```text
-Login
-   ↓
 Dashboard
-   ↓
-Tasks
-   ↓
+My Tasks
 Profile
 ```
 
----
+and confirm:
 
-## Step 10 — Test Tasks
+```text
+ADMIN
+```
 
-Verify that the user can perform the task operations available to their role.
-
-Check:
-
-- Task creation
-- Task listing
-- Task update
-- Task status
-- Priority
-- Category
-- Due date
-- Assigned user where applicable
+is not displayed.
 
 ---
 
-## Step 11 — Test Admin Behavior
+## Admin Test
 
-Login with an administrator account.
+Login using an administrator account.
 
 Verify:
 
 ```text
+Dashboard
 All Tasks
+Profile
+ADMIN
 ```
 
-is displayed instead of:
+---
+
+## Task Test
+
+Verify:
 
 ```text
-My Tasks
+Create Task
+View Task
+Update Task
+Change Priority
+Change Status
+Assign Category
+Assign User
+Set Due Date
+Complete Task
 ```
+
+---
+
+## Profile Test
 
 Verify that:
 
 ```text
-ADMIN
+First Name
+Last Name
+Email
+Role
 ```
 
-is displayed in the UI.
+are displayed correctly.
 
 ---
 
-## Step 12 — Test Normal User Behavior
-
-Login with a regular user.
-
-Verify:
-
-```text
-My Tasks
-```
-
-is displayed.
-
-The:
-
-```text
-ADMIN
-```
-
-indicator should not appear.
-
----
-
-## Step 13 — Test Logout
+## Logout Test
 
 Click Logout.
 
 Verify:
 
 ```text
-Token removed
-       ↓
+JWT removed
+      ↓
 Redirect to Login
 ```
 
-Then try accessing protected functionality again.
-
-The user should need to authenticate again.
-
----
-
-# Troubleshooting
-
-## API returns 401 Unauthorized
-
-Check:
-
-1. Is the JWT token present?
-2. Is the Authorization header correct?
-3. Is the token expired?
-4. Is the signing key correct?
-5. Are issuer/audience settings consistent?
-6. Is `UseAuthentication()` configured?
-7. Is `UseAuthorization()` configured?
-8. Is the endpoint protected intentionally?
-
----
-
-## API returns 500 with JWT key error
-
-If an error similar to:
-
-```text
-IDX10703: Cannot create SymmetricSecurityKey, key length is zero
-```
-
-appears, check the JWT configuration.
-
-Make sure the configuration property expected by the JWT service matches the actual appsettings property.
-
-For example:
-
-```text
-Jwt:SecretKey
-```
-
-must exist and contain a valid secret.
-
----
-
-## Frontend cannot connect to backend
-
-Check that:
-
-```text
-Frontend API URL
-        ↓
-Backend URL
-```
-
-matches the actual running backend.
-
-For local development, use:
-
-```text
-localhost
-```
-
-with the correct API port.
-
-Also verify that the backend is running before testing frontend API requests.
-
----
-
-## Swagger works on localhost but not on IP address
-
-For local development, prefer:
-
-```text
-http://localhost:<port>/swagger
-```
-
-unless the API has explicitly been configured to listen on the machine's network interface.
-
-The application must be bound to the appropriate interface if it needs to accept requests through the machine's LAN IP.
-
----
-
-## Database connection fails
-
-Check:
-
-- SQL Server service is running
-- Server/instance name is correct
-- Database name is correct
-- Authentication method is correct
-- Connection string is valid
-- `TrustServerCertificate=True` is present when required for local development
-
----
-
-# Security Notes
-
-The project uses JWT authentication, but production deployments should use stronger security practices.
-
-Do not commit:
-
-- Production JWT secrets
-- Database passwords
-- API keys
-- Connection credentials
-
-Sensitive values should be stored using environment variables, secret managers, or deployment-specific configuration.
-
----
-
-# Development Summary
-
-The project development covered the following major stages:
-
-```text
-Project Setup
-     ↓
-Clean Architecture
-     ↓
-Domain Entities
-     ↓
-Persistence / EF Core
-     ↓
-SQL Server
-     ↓
-ASP.NET Core Identity
-     ↓
-Authentication
-     ↓
-JWT Authentication
-     ↓
-JWT Testing
-     ↓
-Authorization
-     ↓
-Protected Endpoints
-     ↓
-React Frontend
-     ↓
-Role-Based UI
-     ↓
-Task Management
-     ↓
-Testing
-     ↓
-SonarQube
-     ↓
-GitHub Actions / CI
-```
-
----
-
-# Key Learning Outcomes
-
-The project demonstrates practical understanding of:
-
-- ASP.NET Core Web API development
-- Clean Architecture
-- Dependency Injection
-- Entity Framework Core
-- SQL Server
-- ASP.NET Core Identity
-- JWT authentication
-- Role-based authorization
-- Protected API endpoints
-- React frontend development
-- API integration with Axios
-- Client-side routing
-- Responsive UI
-- Logging
-- Exception handling
-- Unit/integration testing structure
-- Git feature branching
-- Pull Requests
-- GitHub Actions
-- SonarQube code-quality analysis
+Attempt to access protected functionality again and verify that authentication is required.
 
 ---
 
 # Final Verification Checklist
 
-Before submitting or demonstrating the project, verify:
+Before submitting the project, verify every item below.
 
-- [ ] SQL Server is running
-- [ ] Database connection string is correct
-- [ ] Database migrations are applied
-- [ ] Backend builds successfully
-- [ ] Backend starts successfully
+## Environment
+
+- [ ] .NET 10 SDK installed
+- [ ] Node.js installed
+- [ ] npm installed
+- [ ] SQL Server installed and running
+- [ ] SSMS can connect to SQL Server
+
+## Backend
+
+- [ ] `dotnet restore` succeeds
+- [ ] `dotnet build` succeeds
+- [ ] Database connection string is configured
+- [ ] EF Core migrations are applied
+- [ ] API starts successfully
+- [ ] API runs on the expected localhost port
 - [ ] Swagger opens successfully
-- [ ] Frontend dependencies are installed
-- [ ] Frontend API URL is correct
-- [ ] Frontend starts successfully
+
+## Database
+
+- [ ] Database exists
+- [ ] Identity tables exist
+- [ ] Application tables exist
+- [ ] Relationships are created correctly
+- [ ] Migrations are applied successfully
+
+## Authentication
+
 - [ ] Registration works
 - [ ] Login works
+- [ ] Invalid login returns an appropriate error
 - [ ] JWT is generated
 - [ ] JWT is stored by the frontend
+- [ ] JWT is sent with protected API requests
 - [ ] Protected endpoints reject unauthenticated requests
 - [ ] Protected endpoints accept valid JWTs
-- [ ] Admin role is recognized
-- [ ] Normal user role is recognized
+- [ ] Expired/invalid authentication is handled
+
+## Authorization
+
+- [ ] Admin role works
+- [ ] Regular User role works
 - [ ] Admin sees `All Tasks`
-- [ ] Normal user sees `My Tasks`
-- [ ] Admin indicator appears only for admins
-- [ ] Task functionality works
+- [ ] Regular User sees `My Tasks`
+- [ ] Admin indicator is shown for administrators
+- [ ] Admin indicator is hidden for regular users
+- [ ] Backend authorization is enforced
+
+## Tasks
+
+- [ ] Create task works
+- [ ] Read/list tasks works
+- [ ] Update task works
+- [ ] Delete functionality works if provided
+- [ ] Priority works
+- [ ] Status works
+- [ ] Category works
+- [ ] Due date works
+- [ ] Assignment works where applicable
+
+## Frontend
+
+- [ ] Login page works
+- [ ] Registration page works
+- [ ] Dashboard works
+- [ ] Tasks page works
 - [ ] Profile page works
-- [ ] Logout removes the authentication token
-- [ ] SonarQube workflow completes successfully
-- [ ] No secrets are committed to Git
+- [ ] Responsive sidebar works
+- [ ] Mobile menu works
+- [ ] Header displays correct user information
+- [ ] Toast notifications work
+- [ ] Axios API communication works
+
+## Logout
+
+- [ ] Logout removes the JWT
+- [ ] User is redirected to login
+- [ ] Protected functionality cannot be accessed without authentication
+
+## Testing and Quality
+
+- [ ] `dotnet test` runs successfully
+- [ ] `npm run lint` succeeds
+- [ ] `npm run build` succeeds
+- [ ] GitHub Actions workflow succeeds
+- [ ] SonarQube analysis completes
+- [ ] No production secrets are committed
+
+---
+
+# Quick Start
+
+For an evaluator who wants to run the application quickly:
+
+### 1. Start SQL Server
+
+Make sure SQL Server is running.
+
+### 2. Configure the backend database
+
+Set the appropriate connection string in:
+
+```text
+Backend/src/TaskManagement.API/appsettings.json
+```
+
+### 3. Start Backend
+
+```bash
+cd Backend
+dotnet restore
+dotnet build
+dotnet ef database update
+dotnet run --project src/TaskManagement.API
+```
+
+Open:
+
+```text
+http://localhost:5135/swagger
+```
+
+### 4. Start Frontend
+
+Open another terminal:
+
+```bash
+cd Frontend
+npm install
+```
+
+Ensure `.env` contains:
+
+```env
+VITE_API_URL=http://localhost:5135/api
+```
+
+Then:
+
+```bash
+npm run dev
+```
+
+Open the frontend URL shown by Vite.
+
+### 5. Demonstrate the Application
+
+```text
+Register
+   ↓
+Login
+   ↓
+Dashboard
+   ↓
+Create / View / Update Tasks
+   ↓
+Profile
+   ↓
+Test Role-Based Access
+   ↓
+Logout
+```
+
+For API-level verification:
+
+```text
+Swagger
+   ↓
+Login
+   ↓
+Copy JWT
+   ↓
+Authorize
+   ↓
+Call Protected Endpoint
+```
 
 ---
 
 # Conclusion
 
-TaskFlow combines a secure ASP.NET Core backend with a React frontend to provide a complete task management experience.
+TaskFlow demonstrates a complete full-stack application using a Clean Architecture ASP.NET Core backend and a React.js frontend.
 
-The backend uses Clean Architecture to maintain separation of concerns, ASP.NET Core Identity for user management, JWT for stateless authentication, and role-based authorization for access control.
+The project integrates:
 
-The React frontend provides the user interface and communicates with the protected backend APIs.
+- ASP.NET Core Web API
+- Clean Architecture
+- ASP.NET Core Identity
+- JWT authentication
+- Role-based authorization
+- Entity Framework Core
+- SQL Server
+- React.js
+- Axios
+- Responsive UI
+- Serilog logging
+- Exception handling
+- Unit and integration testing
+- Swagger/OpenAPI
+- SonarQube Cloud
+- GitHub Actions
 
-The project also incorporates database migrations, logging, automated code-quality analysis, Git-based collaboration, and CI/CD through GitHub Actions.
-
-The recommended demonstration flow is:
-
-```text
-Run SQL Server
-      ↓
-Apply Database Migration
-      ↓
-Run ASP.NET Core API
-      ↓
-Open Swagger
-      ↓
-Register / Login
-      ↓
-Obtain JWT
-      ↓
-Test Protected Endpoint
-      ↓
-Run React Frontend
-      ↓
-Test Dashboard
-      ↓
-Test Tasks
-      ↓
-Test Admin/User Roles
-      ↓
-Test Logout
-```
-
-This provides a complete end-to-end verification of the TaskFlow application.
+The complete application can be verified by running the backend and database, applying the EF Core migrations, starting the React frontend, and testing authentication, authorization, task management, profile functionality, API security, and logout according to the procedures described above.
