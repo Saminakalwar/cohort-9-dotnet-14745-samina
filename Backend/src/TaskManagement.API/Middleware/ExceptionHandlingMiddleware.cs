@@ -40,25 +40,23 @@ public class ExceptionHandlingMiddleware
     {
         context.Response.ContentType = "application/json";
 
-        var statusCode = exception switch
+      var statusCode = exception switch
         {
             KeyNotFoundException => (int)HttpStatusCode.NotFound,
-
             UnauthorizedAccessException => (int)HttpStatusCode.Forbidden,
-
+            ArgumentException => (int)HttpStatusCode.BadRequest,
             _ => (int)HttpStatusCode.InternalServerError
         };
 
         context.Response.StatusCode = statusCode;
 
-        var response = new
+            var response = new
         {
             message = exception switch
             {
                 KeyNotFoundException => exception.Message,
-
                 UnauthorizedAccessException => exception.Message,
-
+                ArgumentException => exception.Message,
                 _ => "An unexpected error occurred."
             }
         };

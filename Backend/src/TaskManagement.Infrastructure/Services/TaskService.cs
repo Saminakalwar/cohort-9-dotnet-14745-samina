@@ -8,7 +8,6 @@ using TaskManagement.Domain.Common;
 using Microsoft.Extensions.Logging;
 using Microsoft.EntityFrameworkCore.Metadata.Internal;
 
-
 namespace TaskManagement.Infrastructure.Services;
 
 public class TaskService : ITaskService
@@ -26,6 +25,11 @@ public class TaskService : ITaskService
 
     public async Task<Guid> CreateTaskAsync(CreateTaskRequest request)
     {
+        if (!Enum.IsDefined(typeof(TaskPriority), request.Priority))
+        {
+            throw new ArgumentException("Invalid task priority.");
+        }
+
         var categoryExist = await _context.Categories.AnyAsync(category => category.Id == request.CategoryId);
 
         if (!categoryExist)
@@ -44,7 +48,7 @@ public class TaskService : ITaskService
             Title = request.Title,
             Description = request.Description,
             DueDate = request.DueDate,
-            Priority = request.Priority,
+            Priority = (TaskPriority)request.Priority,
             Status = TaskManagement.Domain.Enums.TaskStatus.Pending,
             CategoryId = request.CategoryId,
             CreatedAt = DateTime.UtcNow,
@@ -69,8 +73,7 @@ public class TaskService : ITaskService
             query = query.Where(t =>
             t.AssignedUserId == _currentUserService.UserId);
         }
-
-        return await query.Select(t => new TaskResponse
+        var tasks = await query.Select(t => new TaskResponse
         {
             Id = t.Id,
             Title = t.Title,
@@ -83,6 +86,10 @@ public class TaskService : ITaskService
             AssignedUserId = t.AssignedUserId
 
         }).ToListAsync();
+
+        _logger.LogInformation("User {UserId} retrieved {TaskCount} tasks", _currentUserService.UserId, tasks.Count);
+
+        return tasks;
     }
 
     public async Task<TaskResponse?> GetTaskByIdAsync(Guid id)
@@ -96,7 +103,7 @@ public class TaskService : ITaskService
             query = query.Where(t => t.AssignedUserId == _currentUserService.UserId);
         }
 
-        return await query
+        var task = await query
             .Where(t => t.Id == id)
             .Select(t => new TaskResponse
             {
@@ -112,10 +119,23 @@ public class TaskService : ITaskService
             })
             .FirstOrDefaultAsync();
 
+        _logger.LogInformation( "User {UserId} retrieved task {TaskId}", _currentUserService.UserId, id);
+        return task;
+
     }
 
     public async Task UpdateTaskAsync(Guid id, UpdateTaskRequest request)
     {
+            if (!Enum.IsDefined(typeof(TaskPriority), request.Priority))
+        {
+            throw new ArgumentException("Invalid task priority.");
+        }
+
+        if (!Enum.IsDefined(typeof(TaskManagement.Domain.Enums.TaskStatus), request.Status))
+        {
+            throw new ArgumentException("Invalid task status.");
+        }
+
         var task = await _context.Tasks
             .FirstOrDefaultAsync(t => t.Id == id);
 
