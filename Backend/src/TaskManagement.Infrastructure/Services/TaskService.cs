@@ -6,7 +6,6 @@ using TaskManagement.Domain.Enums;
 using TaskManagement.Domain.Entities;
 using TaskManagement.Domain.Common;
 using Microsoft.Extensions.Logging;
-using Microsoft.EntityFrameworkCore.Metadata.Internal;
 
 namespace TaskManagement.Infrastructure.Services;
 
