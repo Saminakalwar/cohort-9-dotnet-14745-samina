@@ -1,3 +1,26 @@
+# 🚀 TaskFlow — Task Management System
+
+A full-stack Task Management application built with **ASP.NET Core Web API, React.js, Entity Framework Core, SQL Server, ASP.NET Core Identity, and JWT authentication**.
+
+The application supports:
+
+* 🔐 User registration and JWT-based login
+* 👥 Role-based access for **Admin** and **User**
+* ✅ Task creation and management
+* 📂 Task categories
+* 👤 Task assignment
+* 📅 Due dates, priorities, and statuses
+* 👤 User profile
+* 🛡️ Protected API endpoints
+* 📖 Swagger API documentation
+* 📝 Logging and centralized exception handling
+* 🧪 Unit and integration testing structure
+* 🔎 SonarQube Cloud analysis
+* ⚙️ GitHub Actions CI
+
+The backend follows a **Clean Architecture** structure, while the frontend is built using React.js and communicates with the backend through REST APIs.
+
+
 # 🚀 Run the Project Locally
 
 Follow the steps below to clone, configure, and run the Task Management System on your local machine.
@@ -95,7 +118,7 @@ Run the EF Core database update command from the `Backend` folder:
 ```bash
 dotnet ef database update --project src/TaskManagement.Persistence --startup-project src/TaskManagement.API
 ```
-This means Take the existing migrations/Changes and apply them to the actual database
+This takes the existing migrations/changes and applies them to the actual database.
 
 A successful result should look similar to:
 
@@ -286,10 +309,10 @@ Get Tasks
 
 ## 1. 📁 Go to the Frontend Folder
 
+Open another terminal and run:
+
 ```bash
-Open another Terminal
 cd Frontend
-```
 
 ## 2. 📦 Install Dependencies
 
@@ -325,31 +348,414 @@ http://localhost:5173/
 
 ## 👤 User Flow
 
+
 ### 📝 Register
+
+<img width="1920" height="993" alt="Screenshot 2026-09-24 121852" src="https://github.com/user-attachments/assets/7af9d893-4b5e-4b80-ac88-d4f315c94c8f" />
 
 
 ### 🔐 Login
 
-
-### 📊 Dashboard
+<img width="1920" height="990" alt="Screenshot 2026-09-24 115753" src="https://github.com/user-attachments/assets/aa7f70ca-c094-4187-a9b7-1a560f395c82" />
 
 
 ### 👤 Profile
 
+<img width="1920" height="985" alt="Screenshot 2026-09-24 115832" src="https://github.com/user-attachments/assets/e6d00647-1a12-40cd-a3ee-fbe03c4196df" />
 
-### 📋 Tasks
+
+### 🔐 Authorize with the same token generated in browser to create Category
+
+<img width="1920" height="983" alt="Screenshot 2026-09-24 120124" src="https://github.com/user-attachments/assets/38f19015-399f-4a25-9275-1fe18221c6c3" />
+
+
+### 🔐 Create Category 
+
+<img width="1920" height="982" alt="Screenshot 2026-09-24 120219" src="https://github.com/user-attachments/assets/ce7e774b-f587-417a-9cd9-de256508e0fe" />
 
 
 ### ➕ Create Task
 
+<img width="1920" height="999" alt="Screenshot 2026-09-24 120403" src="https://github.com/user-attachments/assets/56c648a6-2ddb-4fa1-8465-1c39b8d83d96" />
+
+
+### 📋 Tasks
+
+<img width="1920" height="1080" alt="Screenshot 2026-09-24 121019" src="https://github.com/user-attachments/assets/fb749ddd-805b-4499-9ff9-bac4a81af719" />
+
 
 ### 🔎 Search Tasks
 
+<img width="1920" height="976" alt="Screenshot 2026-09-24 120912" src="https://github.com/user-attachments/assets/cde19a02-6345-4d89-8396-d8e8b4d46972" />
+
+### 📊 Dashboard
+
+<img width="1920" height="979" alt="Screenshot 2026-09-24 123300" src="https://github.com/user-attachments/assets/edf7f6c2-f32b-42da-927e-b17297a6b1e1" />
+
+
+### 🗑️ Delete Task
+
+<img width="1920" height="987" alt="Screenshot 2026-09-24 120934" src="https://github.com/user-attachments/assets/8a80f637-4e16-459a-b4f6-9555dbd4cac6" />
+
+
+### 👁️ View Task
+
+<img width="1920" height="985" alt="Screenshot 2026-09-24 121003" src="https://github.com/user-attachments/assets/9079f22c-2b45-420d-8f9a-c7735cb4b553" />
 
 
 
+## 👑 Admin Role Setup
+
+### 1. 👤 Create a User
+
+First, create a normal user through the **Register** page.
+
+Enter the required user details and complete registration.
+
+### 2. 🔐 Login and Get JWT Token
+
+Login with the newly created user's credentials.
+
+Copy the JWT token from the login response.
+
+### 3. 🛡️ Authorize in Swagger
+
+Open Swagger and click **Authorize**.
+
+Enter the JWT token:
+
+```text
+Bearer <your-token>
+```
+
+Click **Authorize**.
+
+### 4. 👑 Make the User an Admin
+
+In Swagger, use:
+
+```text
+POST /api/Auth/make-admin/{email}
+```
+
+Enter the email address of the user you want to make an admin.
+
+Execute the request.
+
+<img width="1920" height="990" alt="Screenshot 2026-09-24 124938" src="https://github.com/user-attachments/assets/c9aabba1-4ddc-4b15-9097-2a77c66b6e61" />
+
+If successful, the user's role is updated from **User** to **Admin**.
+
+### 5. 🚪 Logout from the Frontend
+
+Go back to the frontend application and **Logout**.
+
+This is required because the previously issued JWT still contains the old user role.
+
+### 6. 🔑 Login Again
+
+Login again using the same user's credentials.
+
+A new JWT token is generated with the updated **Admin** role.
+
+### 7. 👑 Access Admin Dashboard
+
+After logging in again, the user can now access the **Admin Dashboard**.
+
+<img width="1920" height="981" alt="Screenshot 2026-09-24 125036" src="https://github.com/user-attachments/assets/944312f2-0bae-4c6e-9b74-8c8271973760" />
+
+## 👑 Admin Profile
+
+<img width="1920" height="1003" alt="Screenshot 2026-09-24 125113" src="https://github.com/user-attachments/assets/64a48e28-ccc1-49e0-825f-9cd245db806a" />
 
 
+Admin users can access additional functionality such as:
+
+* 👥 View all users
+* 📋 View users' tasks
+* ✏️ Manage tasks
+* 🗂️ Access admin-level functionality
+* 🔐 Access features restricted to Admin users
+
+<img width="1920" height="964" alt="Screenshot 2026-09-24 125103" src="https://github.com/user-attachments/assets/0a335038-4358-48e9-98e2-b8e8964d2ec0" />
+
+
+> ⚠️ **Important:** Logout and login again after changing the user's role so that a new JWT containing the updated role is issued.
+
+
+
+---
+
+# 📚 Technical Documentation & Concepts
+
+## 🏗️ Clean Architecture
+
+The backend follows **Clean Architecture** and is organized into the following projects:
+
+```text
+Backend/
+├── src/
+│   ├── TaskManagement.API/
+│   ├── TaskManagement.Application/
+│   ├── TaskManagement.Domain/
+│   ├── TaskManagement.Infrastructure/
+│   └── TaskManagement.Persistence/
+│
+└── tests/
+    ├── TaskManagement.UnitTests/
+    └── TaskManagement.IntegrationTests/
+```
+
+### Layer Responsibilities
+
+* **Domain** → Entities and core business models
+* **Application** → DTOs, interfaces, and application services
+* **Persistence** → EF Core, DbContext, Identity, database configuration, and migrations
+* **Infrastructure** → Authentication/JWT service implementations and external concerns
+* **API** → Controllers, middleware, authentication/authorization, Swagger, and application startup
+
+```text
+React Frontend
+      ↓
+ASP.NET Core Web API
+      ↓
+Application / Domain
+      ↓
+Persistence + Infrastructure
+      ↓
+SQL Server
+```
+
+## 🔐 Authentication & Authorization
+
+**Authentication** answers:
+
+> Who is the user?
+
+In this project, users register and log in using their email and password.
+
+**Authorization** answers:
+
+> What is the user allowed to access?
+
+The project has two roles:
+
+* **User**
+* **Admin**
+
+After login, the user's role is included in the JWT token. Protected API endpoints use this information to allow or deny access.
+
+---
+
+## 🎟️ JWT Authentication Flow
+
+JWT stands for **JSON Web Token**.
+
+The authentication flow is:
+
+```text
+Register
+   ↓
+Login
+   ↓
+Backend verifies credentials
+   ↓
+JWT token is generated
+   ↓
+Frontend stores the token
+   ↓
+Token is sent with API requests
+   ↓
+Backend validates the token
+   ↓
+User is authenticated
+```
+
+For protected requests, the token is sent in the request header:
+
+```text
+Authorization: Bearer <token>
+```
+
+The backend reads the token and identifies the authenticated user and their role.
+
+---
+
+## 🛡️ ASP.NET Core Identity
+
+**ASP.NET Core Identity** is used to manage users and roles.
+
+It handles things such as:
+
+* User registration
+* Password management
+* User IDs
+* Roles
+* User authentication data
+
+The project uses a custom `ApplicationUser` class that extends ASP.NET Core Identity's `IdentityUser`.
+
+Roles such as **User** and **Admin** are stored and managed through Identity.
+
+---
+
+## 🗄️ Entity Framework Core & Migrations
+
+**Entity Framework Core (EF Core)** is used to communicate with SQL Server.
+
+Instead of writing SQL for every database operation, the application works with C# entities such as:
+
+* `ApplicationUser`
+* `TaskItem`
+* `Category`
+
+EF Core maps these entities to database tables.
+
+### Migrations
+
+Migrations keep track of database structure changes.
+
+For example:
+
+```text
+C# Entity Changes
+       ↓
+Create Migration
+       ↓
+Database Update
+       ↓
+SQL Server structure is updated
+```
+
+The project uses:
+
+```bash
+dotnet ef database update
+```
+
+to apply existing migrations to the database.
+
+---
+
+## 📝 Logging & Exception Handling
+
+The project uses **Serilog** for application logging.
+
+Logs help developers understand what is happening inside the application and make it easier to investigate errors.
+
+The project also uses centralized exception handling so that unexpected errors can be handled in one place instead of repeating error-handling code in every controller.
+
+This helps provide consistent API error responses and useful logs for debugging.
+
+---
+
+## 🧪 Testing
+
+The project contains separate test projects for testing the backend:
+
+```text
+tests/
+├── TaskManagement.UnitTests/
+└── IntegrationTests/
+```
+
+### Unit Tests
+
+Unit tests check individual pieces of application logic.
+
+The project uses **xUnit** for unit testing.
+
+Run tests using:
+
+```bash
+dotnet test
+```
+
+### Integration Tests
+
+Integration tests check how multiple parts of the application work together, such as API, services, and database-related functionality.
+
+---
+
+## 🔎 SonarQube & Code Quality
+
+**SonarQube Cloud** is used to analyze the codebase and identify potential code quality and security issues.
+
+It can help detect:
+
+* Code smells
+* Bugs
+* Security issues
+* Duplicated code
+* Maintainability problems
+
+This allows code quality to be checked automatically as part of the development process.
+
+---
+
+## ⚙️ GitHub Actions & CI
+
+**GitHub Actions** is used for Continuous Integration (CI).
+
+When code is pushed or a Pull Request is created, the workflow can automatically run project checks such as:
+
+```text
+Code Push / Pull Request
+        ↓
+GitHub Actions
+        ↓
+Build
+        ↓
+Tests / Code Analysis
+        ↓
+Result
+```
+
+This helps catch problems before changes are merged into the main development branch.
+
+<img width="1920" height="775" alt="Screenshot 2026-09-24 130957" src="https://github.com/user-attachments/assets/153ebe77-7bdd-4b15-b480-3eab3c55b4e2" />
+
+
+
+---
+
+## 🔄 Frontend–Backend Communication
+
+The React frontend communicates with the ASP.NET Core backend through **REST APIs**.
+
+The basic flow is:
+
+```text
+React Frontend
+      ↓
+HTTP Request
+      ↓
+ASP.NET Core API
+      ↓
+Application Services
+      ↓
+EF Core
+      ↓
+SQL Server
+```
+
+For example, when a user creates a task:
+
+```text
+React Form
+    ↓
+POST /api/Task
+    ↓
+Task Controller
+    ↓
+Application/Service Logic
+    ↓
+EF Core
+    ↓
+SQL Server
+```
+
+The backend then returns a response to the React frontend, which updates the user interface.
 
 
 
