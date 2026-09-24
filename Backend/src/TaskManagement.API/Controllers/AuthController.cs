@@ -109,22 +109,3 @@ public class AuthController : ControllerBase
 }
 
 
-
-
-    // [Authorize]
-    // [HttpGet("protected")]
-    // public IActionResult Protected()
-    // {
-    //     var userId = User.FindFirst(ClaimTypes.NameIdentifier)?.Value;
-    //     var email = User.FindFirst(ClaimTypes.Email)?.Value;
-    //     var claims = User.Claims.Select(c=> new{c.Type, c.Value});
-
-    //     return Ok(new
-    //     {
-    //         IsAuthenticated = User.Identity?.IsAuthenticated,
-    //         UserId = userId,
-    //         Email = email,
-    //         Claims = claims
-    //     });
-    //     // return Ok("You are authenticated!");
-    // }
