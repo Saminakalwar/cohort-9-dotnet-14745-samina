@@ -48,6 +48,7 @@ Create/connect to your local SQL Server instance. For the local setup, the conne
 Server: localhost
 Authentication: Windows Authentication
 ```
+<img width="1726" height="905" alt="Screenshot 2026-09-24 103839" src="https://github.com/user-attachments/assets/f7ed3e1d-dc57-4134-bacf-53dd6c576d12" />
 
 The application uses a connection string stored through **.NET User Secrets**, so the database password/connection details do not need to be committed to the repository.
 
@@ -117,6 +118,8 @@ Databases
 If the tables are not immediately visible, right-click **Databases → Refresh**.
 
 ---
+<img width="360" height="566" alt="Screenshot 2026-09-24 105618" src="https://github.com/user-attachments/assets/84a90b82-98a0-4164-81d3-c087619e8005" />
+
 
 ## 6. ▶️ Run the Backend API
 
@@ -160,6 +163,9 @@ http://localhost:xxxx/swagger
 ```
 
 Swagger will display all available API endpoints and allow you to test them directly.
+
+<img width="1231" height="944" alt="Screenshot 2026-09-24 105848" src="https://github.com/user-attachments/assets/9984e737-8d9a-4468-8dfb-bbbb24c404b2" />
+
 
 ---
 
